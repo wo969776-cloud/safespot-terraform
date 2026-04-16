@@ -21,3 +21,6 @@
 /terraform/modules/application/ @kksshh926 @naladoodong
 /terraform/modules/cicd/ @2sso
 /terraform/modules/observability/ @2sso
+
+# docs — 전원 수정 가능
+/docs/ @wo969776-cloud @2sso @wjdeksdn-source @naladoodong @kksshh926
