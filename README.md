@@ -27,3 +27,28 @@ network → data → compute → edge → messaging → application → cicd →
 | edge | jaeyoung, seohyun |
 | observability | sohyun |
 | cicd | sohyun |
+
+-------
+## 네이밍 규칙
+`{project}-{env}-{domain}-{resource_type}-{name}`
+
+예시:
+- safespot-dev-network-vpc-main
+- safespot-dev-compute-eks-cluster
+- safespot-dev-data-rds-primary
+
+## 케이스 규칙
+- Terraform 변수/locals: snake_case
+- AWS 리소스 이름: kebab-case
+- 태그 키: PascalCase
+
+## 태그 규칙
+모든 리소스에 아래 태그 필수 적용
+| 태그 키 | 값 예시 | 설명 |
+|---|---|---|
+| Project | safespot | 프로젝트명 |
+| Environment | dev | 환경 |
+| Domain | network | 담당 도메인 |
+| ManagedBy | terraform | 관리 주체 |
+| Service | safespot | 서비스명 |
+| CostCenter | safespot-dev | 비용 추적 |
