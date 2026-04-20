@@ -1,4 +1,4 @@
-# 루트 공통 파일 — integration owner 필수
+# 루트 공통 파일
 /terraform/versions.tf @wo969776-cloud
 /terraform/environments/ @wo969776-cloud
 
@@ -10,7 +10,7 @@
 /terraform/environments/dev/messaging/ @kksshh926 @naladoodong
 /terraform/environments/dev/application/ @kksshh926 @naladoodong
 /terraform/environments/dev/cicd/ @2sso
-/terraform/environments/dev/observability/ @2sso
+/terraform/environments/dev/observability/ @2sso @kksshh926 @wjdeksdn-source @wo969776-cloud
 
 # 모듈
 /terraform/modules/network/ @wo969776-cloud @2sso
@@ -20,7 +20,7 @@
 /terraform/modules/messaging/ @kksshh926 @naladoodong
 /terraform/modules/application/ @kksshh926 @naladoodong
 /terraform/modules/cicd/ @2sso
-/terraform/modules/observability/ @2sso
+/terraform/modules/observability/ @2sso @kksshh926 @wjdeksdn-source @wo969776-cloud
 
-# docs — 전원 수정 가능
+# docs
 /docs/ @wo969776-cloud @2sso @wjdeksdn-source @naladoodong @kksshh926

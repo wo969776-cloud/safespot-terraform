@@ -18,15 +18,15 @@ network → data → compute → edge → messaging → application → cicd →
 - 담당 도메인 외 변경 시 CODEOWNERS 리뷰 필요
 
 ## 담당자
-| 도메인 | 담당자 |
-|---|---|
-| network | jaeyoung, sohyun |
-| data | danu, minjung |
-| compute | minjung, seohyun |
-| messaging | seohyun, minjung |
-| edge | jaeyoung, seohyun |
-| observability | sohyun |
-| cicd | sohyun |
+| 도메인 | 정 | 부 | 비고 |
+|---|---|---|---|
+| network | jaeyoung | sohyun | |
+| data | danu | minjung | |
+| api+service | minjung | seohyun | |
+| cache | danu | minjung | |
+| async+worker | seohyun | minjung | |
+| front+edge | jaeyoung | seohyun | |
+| ops | sohyun | seohyun, danu, jaeyoung | |
 
 -------
 ## 네이밍 규칙
