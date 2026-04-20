@@ -1,4 +1,12 @@
-# 다른 도메인에서 참조할 값 출력 예정
-# output "waf_arn" {
-#   value = module.waf.waf_arn
-# }
+output "route53_zone_id" {
+  value = module.route53.zone_id
+}
+
+output "route53_zone_name" {
+  value = module.route53.zone_name
+}
+
+output "name_servers" {
+  description = "가비아 네임서버 변경 시 사용"
+  value       = module.route53.name_servers
+}
