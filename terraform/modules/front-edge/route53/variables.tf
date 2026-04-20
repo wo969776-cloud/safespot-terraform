@@ -1,8 +1,3 @@
-variable "aws_region" {
-  description = "AWS region"
-  type        = string
-}
-
 variable "project" {
   description = "Project name"
   type        = string
@@ -16,4 +11,9 @@ variable "environment" {
 variable "domain_name" {
   description = "Domain name"
   type        = string
+}
+
+variable "common_tags" {
+  description = "Common tags"
+  type        = map(string)
 }
