@@ -15,6 +15,7 @@ module "rds" {
 
   private_subnet_ids = data.terraform_remote_state.network.outputs.private_subnet_ids
   rds_sg_id          = data.terraform_remote_state.network.outputs.rds_sg_id
+  availability_zones = var.availability_zones
 
   engine_version  = var.rds_engine_version
   instance_class  = var.rds_instance_class
@@ -42,6 +43,7 @@ module "redis" {
 
   engine_version           = var.redis_engine_version
   node_type                = var.redis_node_type
+  num_cache_clusters       = var.redis_num_cache_clusters
   snapshot_retention_limit = var.redis_snapshot_retention_limit
 
   common_tags = local.common_tags

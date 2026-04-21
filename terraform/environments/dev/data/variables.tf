@@ -15,6 +15,12 @@ variable "environment" {
 
 # ── Aurora ──────────────────────────────────────────────
 
+variable "availability_zones" {
+  description = "Availability zones for Aurora Multi-AZ"
+  type        = list(string)
+  default     = ["ap-northeast-2a", "ap-northeast-2c"]
+}
+
 variable "rds_engine_version" {
   description = "Aurora PostgreSQL engine version"
   type        = string
@@ -28,7 +34,7 @@ variable "rds_instance_class" {
 }
 
 variable "rds_instance_count" {
-  description = "Total Aurora instances (writer 1 + readers N-1)"
+  description = "Total Aurora instances (writer 1 + readers)"
   type        = number
   default     = 2
 }
@@ -82,8 +88,14 @@ variable "redis_node_type" {
   default     = "cache.t3.micro"
 }
 
+variable "redis_num_cache_clusters" {
+  description = "Total Redis nodes (master 1 + replica 4 = 5)"
+  type        = number
+  default     = 5
+}
+
 variable "redis_snapshot_retention_limit" {
-  description = "Redis snapshot retention in days (0 = disabled)"
+  description = "Redis snapshot retention in days"
   type        = number
   default     = 1
 }
