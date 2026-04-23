@@ -23,8 +23,13 @@ variable "public_subnet_cidrs" {
   type        = list(string)
 }
 
-variable "private_subnet_cidrs" {
-  description = "Private subnet CIDR blocks"
+variable "private_app_subnet_cidrs" {
+  description = "Private App subnet CIDR blocks (EKS)"
+  type        = list(string)
+}
+
+variable "private_db_subnet_cidrs" {
+  description = "Private DB subnet CIDR blocks (RDS, Redis)"
   type        = list(string)
 }
 
