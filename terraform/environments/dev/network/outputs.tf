@@ -42,3 +42,8 @@ output "rds_sg_id" {
 output "redis_sg_id" {
   value = module.sg.redis_sg_id
 }
+
+output "lambda_sg_id" {
+  description = "Lambda Security Group ID"
+  value       = module.sg.lambda_sg_id
+}
