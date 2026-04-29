@@ -19,12 +19,12 @@ Terraform은 코드 변경이 곧 실제 인프라 변경으로 이어지므로 
 ```text
 main
 
-infra/network
-infra/data
-infra/front-edge
-infra/api-service
-infra/async-worker
-infra/ops-cicd
+infra/network -> 재영
+infra/data -> 단우
+infra/front-edge -> 재영
+infra/api-service -> 민중
+infra/async-worker -> 서현
+infra/ops-cicd -> 소현
 
 docs/contracts
 docs/architecture
