@@ -42,4 +42,4 @@ variable "app_port" {
   description = "Application port (ALB to EKS node)"
   type        = number
   default     = 8080
-}
+} # 수정 가능성 있음 eks

@@ -22,7 +22,11 @@ module "acm" {
 
 # module "waf" {
 #   source = "../../../modules/front-edge/waf"
-#
+
+#   providers = {
+#     aws.us_east_1 = aws.us_east_1 
+#   }
+
 #   project     = var.project
 #   environment = var.environment
 #   common_tags = local.common_tags
