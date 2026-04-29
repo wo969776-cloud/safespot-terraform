@@ -1,0 +1,9 @@
+WSL: Ubuntu-24.04에 설치된 확장:
+anthropic.claude-code
+esbenp.prettier-vscode
+github.copilot-chat
+hashicorp.terraform
+mhutchie.git-graph
+ms-azuretools.vscode-azureterraform
+ms-ceintl.vscode-language-pack-ko
+ole-jh.tflint-linter
