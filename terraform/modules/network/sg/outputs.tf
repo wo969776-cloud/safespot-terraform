@@ -22,3 +22,8 @@ output "redis_sg_id" {
   description = "Redis Security Group ID"
   value       = aws_security_group.redis.id
 }
+
+output "lambda_sg_id" {
+  description = "Lambda Security Group ID"
+  value       = aws_security_group.lambda.id
+}

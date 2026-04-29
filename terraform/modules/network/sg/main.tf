@@ -169,3 +169,64 @@ resource "aws_security_group_rule" "redis_from_eks" {
   security_group_id        = aws_security_group.redis.id
   source_security_group_id = aws_security_group.eks_node.id
 }
+
+# Lambda Security Group
+resource "aws_security_group" "lambda" {
+  name        = "${var.project}-${var.environment}-network-sg-lambda"
+  description = "Lambda Worker Security Group"
+  vpc_id      = var.vpc_id
+
+  egress {
+    description = "Lambda to external (SQS, CloudWatch, Secrets Manager)"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(var.common_tags, {
+    Name = "${var.project}-${var.environment}-network-sg-lambda"
+  })
+}
+
+# Lambda → RDS
+resource "aws_security_group_rule" "lambda_to_rds" {
+  type                     = "egress"
+  description              = "Lambda to RDS"
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.lambda.id
+  source_security_group_id = aws_security_group.rds.id
+}
+
+resource "aws_security_group_rule" "rds_from_lambda" {
+  type                     = "ingress"
+  description              = "Lambda to RDS"
+  from_port                = 3306
+  to_port                  = 3306
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.rds.id
+  source_security_group_id = aws_security_group.lambda.id
+}
+
+# Lambda → Redis
+resource "aws_security_group_rule" "lambda_to_redis" {
+  type                     = "egress"
+  description              = "Lambda to Redis"
+  from_port                = 6379
+  to_port                  = 6379
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.lambda.id
+  source_security_group_id = aws_security_group.redis.id
+}
+
+resource "aws_security_group_rule" "redis_from_lambda" {
+  type                     = "ingress"
+  description              = "Lambda to Redis"
+  from_port                = 6379
+  to_port                  = 6379
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.redis.id
+  source_security_group_id = aws_security_group.lambda.id
+}
