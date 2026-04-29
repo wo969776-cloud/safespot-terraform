@@ -22,3 +22,8 @@ output "vpc_cidr" {
   description = "VPC CIDR block"
   value       = aws_vpc.main.cidr_block
 }
+
+output "private_app_route_table_ids" {
+  description = "Private App Route Table IDs (VPC Endpoint 연결용)"
+  value       = aws_route_table.private_app[*].id
+}
