@@ -5,20 +5,18 @@
 # 실행 디렉토리
 /terraform/environments/dev/network/ @wo969776-cloud @2sso
 /terraform/environments/dev/data/ @wjdeksdn-source @naladoodong
-/terraform/environments/dev/compute/ @naladoodong @kksshh926
-/terraform/environments/dev/edge/ @wo969776-cloud @kksshh926
-/terraform/environments/dev/messaging/ @kksshh926 @naladoodong
-/terraform/environments/dev/application/ @kksshh926 @naladoodong
+/terraform/environments/dev/api-service/ @naladoodong @kksshh926
+/terraform/environments/dev/front-edge/ @wo969776-cloud @kksshh926
+/terraform/environments/dev/async-worker/ @kksshh926 @naladoodong
 /terraform/environments/dev/cicd/ @2sso
 /terraform/environments/dev/observability/ @2sso @kksshh926 @wjdeksdn-source @wo969776-cloud
 
 # 모듈
 /terraform/modules/network/ @wo969776-cloud @2sso
 /terraform/modules/data/ @wjdeksdn-source @naladoodong
-/terraform/modules/compute/ @naladoodong @kksshh926
-/terraform/modules/edge/ @wo969776-cloud @kksshh926
-/terraform/modules/messaging/ @kksshh926 @naladoodong
-/terraform/modules/application/ @kksshh926 @naladoodong
+/terraform/modules/api-service/ @naladoodong @kksshh926
+/terraform/modules/front-edge/ @wo969776-cloud @kksshh926
+/terraform/modules/async-worker/ @kksshh926 @naladoodong
 /terraform/modules/cicd/ @2sso
 /terraform/modules/observability/ @2sso @kksshh926 @wjdeksdn-source @wo969776-cloud
 
