@@ -1,5 +1,15 @@
-````markdown
 # Git 운영 규약 가이드 (SafeSpot Terraform)
+
+## 결론
+
+```text
+1. 공유 브랜치는 merge
+2. 작업 브랜치는 rebase
+3. docs는 중앙에서 merge 후 pull
+4. 브랜치는 type/area-scope
+```
+
+---
 
 ## 1. 목적
 
@@ -67,7 +77,7 @@ docs/terraform-guide
 ## 4. 작업 흐름
 
 ```text
-feature branch
+type/area-scope 브랜치 생성
  → infra/* (파트 브랜치)
  → main
 ```
@@ -76,29 +86,54 @@ feature branch
 
 ### 작업 절차
 
-1. 본인 `infra/*` 브랜치에서 feature 브랜치 생성
-2. Terraform 코드 작업
-3. `terraform fmt`, `validate` 수행
-4. PR 생성 → infra 브랜치
-5. status check 통과 후 merge
-6. main으로 PR 생성
-7. 관리자 승인 후 merge
-8. apply 진행
+1. `infra/*` 최신화
+2. `type/area-scope` 브랜치 생성
+3. Terraform 작업
+4. PR → infra 브랜치
+5. merge
+6. PR → main
+7. 승인 후 merge
 
 ---
 
 ## 5. 브랜치 네이밍 규칙
 
 ```text
-<base>/<type>/<short-description>
+type/area-scope
 ```
 
-예시:
+### 구성
+
+* type: 작업 유형 (feat, fix, refactor, docs, chore)
+* area: 담당 영역 (network, data, front-edge, api-service, async-worker, ops-cicd)
+* scope: 작업 대상
+
+---
+
+### 예시
+
+```text
+feat/network-vpc
+feat/data-rds
+feat/api-service-eks
+fix/data-rds-subnet-group
+docs/data-variable-contract
+```
+
+---
+
+### 금지 규칙
 
 ```text
 infra/network/feat/vpc-subnet
 infra/data/feat/rds
-infra/api-service/feat/eks
+```
+
+이유:
+
+```text
+infra/data 브랜치가 이미 존재하면
+infra/data/... 하위 브랜치는 생성 불가 (Git ref 충돌)
 ```
 
 ---
@@ -106,14 +141,14 @@ infra/api-service/feat/eks
 ## 6. Commit 메시지 규칙
 
 ```text
-<type>(<scope>): <message>
+<type>(<area>): <message>
 ```
 
-예시:
+예:
 
 ```text
-feat(network): add vpc
-fix(data): adjust rds parameter group
+feat(data): add rds
+fix(network): adjust route table
 ```
 
 ---
@@ -122,120 +157,95 @@ fix(data): adjust rds parameter group
 
 ### 7.1 infra 브랜치
 
-* reviewer 지정 없이 merge 가능
-* comment/approval 불필요
-* **status check 통과 시 merge 허용**
+* reviewer 없이 merge 가능
+* status check 필수
 
-필수 조건:
+조건:
 
-* terraform fmt 통과
-* terraform validate 통과
-* terraform plan 성공
+* fmt
+* validate
+* plan 성공
 
 ---
 
 ### 7.2 main 브랜치
 
-* **관리자 1명 승인 필수**
-* status check 통과 필수
-
-필수 조건:
-
-* terraform plan 결과 확인
-* 변경 영향 범위 검증
+* 관리자 승인 필수
+* plan 검증 필수
 
 ---
 
-### 7.3 PR 템플릿
+## 8. docs 운영 전략
 
-````markdown
-## 변경 내용
-- 변경 사항 요약
-
-## 영향 범위
-- 변경되는 리소스
-
-## Terraform Plan
-```bash
-terraform plan 결과
-````
-
-## 체크리스트
-
-* [ ] fmt
-* [ ] validate
-* [ ] plan 확인
-
-````
-
----
-
-## 8. docs 브랜치 운영
-
-### 목적
-
-- 규약 공유
-- 충돌 사전 방지
-
----
-
-### 원칙
-
-- 구현 전에 contracts 문서 정의
-- docs 변경은 빠르게 공유 및 merge
-
----
-
-### 주요 문서
+### 핵심 구조
 
 ```text
-docs/contracts/
-├── module-ownership.md
-├── naming-convention.md
-├── tagging-policy.md
-├── security-group.md
-├── iam-role.md
-````
-
----
-
-## 9. 교차 영역 변경 절차
-
-```text
-1. docs/contracts에 변경 요청 작성
-2. 담당자 확인
-3. 해당 브랜치에서 수정
-4. PR 진행
+docs/terraform-guide → infra/*
 ```
 
 ---
 
-## 10. main 브랜치 정책
+### 운영 방식
 
-* direct push 금지
-* 관리자 승인 없이 merge 금지
-* apply는 main 기준으로만 수행
+1. docs 변경은 `docs/terraform-guide`에서 작업
+2. GitHub PR로 각 `infra/*` 브랜치에 merge
+3. 각 담당자는 pull만 수행
+
+```bash
+git switch infra/data
+git pull origin infra/data
+```
 
 ---
 
-## 11. 금지 사항
+### 특징
+
+```text
+- docs 변경 중앙 관리
+- infra 히스토리 유지
+- rebase 불필요
+```
+
+---
+
+## 9. Git 동기화 규칙
+
+### 공유 브랜치 (infra/*, main)
+
+```text
+merge만 사용 (rebase 금지)
+```
+
+---
+
+### 작업 브랜치
+
+```text
+rebase 사용
+```
+
+```bash
+git fetch origin
+git rebase origin/infra/data
+```
+
+---
+
+## 10. 금지 사항
 
 * main 직접 push
-* status check 없이 merge
-* 타 영역 리소스 무단 수정
-* Terraform state backend 임의 변경
+* infra/* rebase
+* force push
+* infra/<area>/<type>/<scope> 브랜치 생성
+* PR 없이 직접 push
 
 ---
 
-## 12. 결론
 
-핵심 운영 기준:
 
-```text
-1. infra 브랜치는 빠르게 병합 (자동 검증 기반)
-2. main은 반드시 관리자 승인
-3. Terraform 변경은 항상 검증 후 반영
-```
+````
 
-```
-```
+
+
+원하면
+👉 이걸 기반으로 **PR 템플릿 / GitHub Action / 자동 docs fan-out까지** 연결 설계해줄 수 있다.
