@@ -16,7 +16,6 @@ variable "env" {
 variable "ssm_parameters" {
   description = "SSM parameters to create"
   type = map(object({
-    name        = string
     value       = string
     type        = optional(string, "String")
     description = optional(string)
