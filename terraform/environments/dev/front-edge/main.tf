@@ -1,3 +1,12 @@
+# data "terraform_remote_state" "api_service" {
+#   backend = "s3"
+#   config = {
+#     bucket = "safespot-terraform-state"
+#     key    = "environments/dev/api-service/terraform.tfstate"
+#     region = "ap-northeast-2"
+#   }
+# }
+
 module "route53" {
   source = "../../../modules/front-edge/route53"
 
@@ -29,5 +38,32 @@ module "acm" {
 
 #   project     = var.project
 #   environment = var.environment
+#   common_tags = local.common_tags
+# }
+
+module "s3" {
+  source = "../../../modules/front-edge/s3"
+
+  project     = var.project
+  environment = var.environment
+  common_tags = local.common_tags
+}
+
+# module "cloudfront" {
+#   source = "../../../modules/front-edge/cloudfront"
+#
+#   project     = var.project
+#   environment = var.environment
+#   domain_name = var.domain_name
+#
+#   bucket_name                 = module.s3.bucket_name
+#   bucket_arn                  = module.s3.bucket_arn
+#   bucket_regional_domain_name = module.s3.bucket_regional_domain_name
+#
+#   acm_certificate_arn = module.acm.certificate_arn
+#   waf_acl_arn         = module.waf.waf_acl_arn
+#
+#   alb_dns_name = data.terraform_remote_state.api_service.outputs.alb_dns_name
+#
 #   common_tags = local.common_tags
 # }
