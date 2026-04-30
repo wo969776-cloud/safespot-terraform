@@ -46,3 +46,8 @@ variable "common_tags" {
   description = "Common tags"
   type        = map(string)
 }
+variable "redis_port" {
+  description = "Redis port"
+  type        = number
+  default     = 6379
+}

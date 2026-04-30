@@ -81,3 +81,8 @@ variable "common_tags" {
   description = "Common tags"
   type        = map(string)
 }
+variable "db_port" {
+  description = "Aurora PostgreSQL port"
+  type        = number
+  default     = 5432
+}

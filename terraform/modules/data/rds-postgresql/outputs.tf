@@ -22,3 +22,7 @@ output "cluster_identifier" {
   description = "Aurora cluster identifier"
   value       = aws_rds_cluster.main.cluster_identifier
 }
+output "rds_port" {
+  description = "Aurora port"
+  value       = aws_rds_cluster.main.port
+}
