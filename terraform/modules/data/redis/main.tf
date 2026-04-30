@@ -30,7 +30,7 @@ resource "aws_elasticache_replication_group" "main" {
 
   engine_version = var.engine_version
   node_type      = var.node_type
-  port           = 6379
+  port           = var.redis_port
 
   num_cache_clusters = var.num_cache_clusters
 
