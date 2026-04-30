@@ -21,9 +21,9 @@ network → data → compute → edge → messaging → application → cicd →
 | 도메인 | 정 | 부 | 비고 |
 |---|---|---|---|
 | network | jaeyoung | sohyun | |
-| data | danu | minjung | |
+| data | danwoo | minjung | |
 | api+service | minjung | seohyun | |
-| cache | danu | minjung | |
+| cache | danwoo | minjung | |
 | async+worker | seohyun | minjung | |
 | front+edge | jaeyoung | seohyun | |
 | ops | sohyun | seohyun, danu, jaeyoung | |
