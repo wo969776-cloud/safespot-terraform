@@ -17,9 +17,9 @@ module "rds" {
   rds_sg_id          = data.terraform_remote_state.network.outputs.rds_sg_id
   availability_zones = var.availability_zones
 
-  engine_version  = var.rds_engine_version
-  instance_class  = var.rds_instance_class
-  instance_count  = var.rds_instance_count
+  engine_version = var.rds_engine_version
+  instance_class = var.rds_instance_class
+  instance_count = var.rds_instance_count
 
   db_name     = var.db_name
   db_username = var.db_username
