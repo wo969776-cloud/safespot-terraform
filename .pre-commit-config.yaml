@@ -4,14 +4,14 @@ repos:
     hooks:
       - id: terraform_fmt
         files: ^terraform/environments/dev/api-service/
-        
+
       - id: terraform_validate
-        stages: [manual]
+        #stages: [manual]
         files: ^terraform/environments/dev/api-service/
       - id: terraform_tflint
         files: ^terraform/environments/dev/api-service/
       - id: terraform_docs
-        stages: [manual]
+        #stages: [manual]
         files: ^terraform/modules/api-service/
         args:
           - markdown
@@ -19,4 +19,3 @@ repos:
           - --output-file
           - README.md
           - .
-
