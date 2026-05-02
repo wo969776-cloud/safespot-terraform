@@ -9,6 +9,18 @@ variable "env" {
   type        = string
 }
 
+variable "remote_state_bucket" {
+  description = "S3 bucket name for Terraform remote state."
+  type        = string
+  default     = "safespot-terraform-state"
+}
+
+variable "network_state_key" {
+  description = "S3 object key for network Terraform state."
+  type        = string
+  default     = "environments/dev/network/terraform.tfstate"
+}
+
 variable "cluster_name" {
   description = "EKS cluster name."
   type        = string
@@ -18,22 +30,6 @@ variable "cluster_version" {
   description = "Kubernetes version for EKS."
   type        = string
   default     = "1.34"
-}
-
-variable "vpc_id" {
-  description = "VPC ID for EKS."
-  type        = string
-}
-
-variable "private_subnet_ids" {
-  description = "Private subnet IDs for EKS worker nodes."
-  type        = list(string)
-}
-
-variable "control_plane_subnet_ids" {
-  description = "Subnet IDs for EKS control plane ENIs."
-  type        = list(string)
-  default     = []
 }
 
 variable "cluster_endpoint_public_access" {
