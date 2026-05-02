@@ -1,16 +1,3 @@
-locals {
-  common_tags = {
-    Project     = "safespot"
-    Environment = var.env
-    Domain      = "api-service"
-    Component   = "eks-core"
-    ManagedBy   = "terraform"
-  }
-
-  vpc_id                 = data.terraform_remote_state.network.outputs.vpc_id
-  private_app_subnet_ids = data.terraform_remote_state.network.outputs.private_app_subnet_ids
-}
-
 module "eks_core" {
   source = "../../../../modules/api-service/eks-core"
 
@@ -20,6 +7,9 @@ module "eks_core" {
   vpc_id                   = local.vpc_id
   private_subnet_ids       = local.private_app_subnet_ids
   control_plane_subnet_ids = local.private_app_subnet_ids
+
+  cluster_security_group_id = local.eks_cluster_sg_id
+  node_security_group_id    = local.eks_node_sg_id
 
   cluster_endpoint_public_access = var.cluster_endpoint_public_access
 
