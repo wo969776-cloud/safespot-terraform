@@ -6,6 +6,9 @@ locals {
     Component   = "eks-core"
     ManagedBy   = "terraform"
   }
+
+  vpc_id                 = data.terraform_remote_state.network.outputs.vpc_id
+  private_app_subnet_ids = data.terraform_remote_state.network.outputs.private_app_subnet_ids
 }
 
 module "eks_core" {
@@ -14,9 +17,9 @@ module "eks_core" {
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
 
-  vpc_id                   = var.vpc_id
-  private_subnet_ids       = var.private_subnet_ids
-  control_plane_subnet_ids = var.control_plane_subnet_ids
+  vpc_id                   = local.vpc_id
+  private_subnet_ids       = local.private_app_subnet_ids
+  control_plane_subnet_ids = local.private_app_subnet_ids
 
   cluster_endpoint_public_access = var.cluster_endpoint_public_access
 
