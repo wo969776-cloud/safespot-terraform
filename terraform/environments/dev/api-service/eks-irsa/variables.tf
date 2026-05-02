@@ -27,20 +27,14 @@ variable "eks_core_state_key" {
   default     = "environments/dev/api-service/eks-core/terraform.tfstate"
 }
 
-variable "karpenter_namespace" {
-  description = "Kubernetes namespace for Karpenter controller."
+variable "alb_controller_namespace" {
+  description = "Kubernetes namespace for AWS Load Balancer Controller."
   type        = string
   default     = "kube-system"
 }
 
-variable "karpenter_service_account_name" {
-  description = "Kubernetes ServiceAccount name for Karpenter controller."
+variable "alb_controller_service_account_name" {
+  description = "Kubernetes ServiceAccount name for AWS Load Balancer Controller."
   type        = string
-  default     = "karpenter"
-}
-
-variable "enable_spot_termination" {
-  description = "Whether to enable native spot interruption handling."
-  type        = bool
-  default     = true
+  default     = "aws-load-balancer-controller"
 }

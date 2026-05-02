@@ -1,14 +1,13 @@
 locals {
   domain    = "api-service"
-  component = "eks-karpenter"
+  component = "eks-irsa"
 
   cluster_name      = data.terraform_remote_state.eks_core.outputs.cluster_name
   oidc_provider_arn = data.terraform_remote_state.eks_core.outputs.oidc_provider_arn
+  oidc_provider     = data.terraform_remote_state.eks_core.outputs.oidc_provider
 
-  karpenter_controller_role_name   = "${var.project}-${var.env}-karpenter-controller"
-  karpenter_controller_policy_name = "${var.project}-${var.env}-karpenter-controller"
-  karpenter_node_role_name         = "${var.project}-${var.env}-karpenter-node"
-  karpenter_queue_name             = "${var.project}-${var.env}-karpenter"
+  alb_controller_role_name   = "${var.project}-${var.env}-aws-load-balancer-controller-irsa"
+  alb_controller_policy_name = "${var.project}-${var.env}-aws-load-balancer-controller-policy"
 
   common_tags = {
     Project     = var.project
