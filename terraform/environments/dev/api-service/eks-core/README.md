@@ -276,7 +276,34 @@ terraform init
 
 ---
 
-## 13. 후속 작업
+## 13. Network Remote State 소비 계약
+
+`eks-core`는 `network` remote state에서 다음 값을 읽습니다.
+
+| Output                  | 용도                                          |
+| ----------------------- | --------------------------------------------- |
+| `vpc_id`                | EKS Cluster VPC 지정                          |
+| `private_app_subnet_ids`| Worker Node 배치 Subnet                      |
+| `eks_cluster_sg_id`     | EKS Cluster Security Group (외부 생성본 사용) |
+| `eks_node_sg_id`        | EKS Node Security Group (외부 생성본 사용)    |
+
+EKS Cluster와 Node Group은 network module에서 미리 생성된 Security Group을 사용합니다. `eks-core`에서 Security Group을 새로 생성하지 않습니다.
+
+### alb_sg_id 정책
+
+`alb_sg_id`는 `network` module의 output을 source of truth로 사용합니다.
+
+`eks-core`는 `alb_sg_id`를 pass-through output으로 재노출하지 않습니다.
+
+Ingress Helm values에서 ALB Security Group이 필요한 경우 network remote state의 `alb_sg_id`를 직접 참조합니다.
+
+```text
+alb.ingress.kubernetes.io/security-groups: <network.outputs.alb_sg_id>
+```
+
+---
+
+## 14. 후속 작업
 
 `eks-core` 완료 후 다음 순서로 진행합니다.
 
@@ -330,6 +357,7 @@ terraform init
 | <a name="input_node_instance_types"></a> [node\_instance\_types](#input\_node\_instance\_types) | Instance types for the default EKS managed node group. | `list(string)` | <pre>[<br/>  "t3.medium"<br/>]</pre> | no |
 | <a name="input_node_max_size"></a> [node\_max\_size](#input\_node\_max\_size) | Maximum node count. | `number` | `3` | no |
 | <a name="input_node_min_size"></a> [node\_min\_size](#input\_node\_min\_size) | Minimum node count. | `number` | `1` | no |
+| <a name="input_project"></a> [project](#input\_project) | Project name. | `string` | `"safespot"` | no |
 | <a name="input_remote_state_bucket"></a> [remote\_state\_bucket](#input\_remote\_state\_bucket) | S3 bucket name for Terraform remote state. | `string` | `"safespot-terraform-state"` | no |
 
 ## Outputs

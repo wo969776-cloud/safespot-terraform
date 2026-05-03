@@ -93,7 +93,9 @@ serviceAccount:
 |------|-------------|
 | <a name="output_alb_controller_irsa_role_arn"></a> [alb\_controller\_irsa\_role\_arn](#output\_alb\_controller\_irsa\_role\_arn) | IAM role ARN for AWS Load Balancer Controller IRSA. |
 | <a name="output_alb_controller_irsa_role_name"></a> [alb\_controller\_irsa\_role\_name](#output\_alb\_controller\_irsa\_role\_name) | IAM role name for AWS Load Balancer Controller IRSA. |
+| <a name="output_alb_controller_namespace"></a> [alb\_controller\_namespace](#output\_alb\_controller\_namespace) | Kubernetes namespace for AWS Load Balancer Controller. |
 | <a name="output_alb_controller_policy_arn"></a> [alb\_controller\_policy\_arn](#output\_alb\_controller\_policy\_arn) | IAM policy ARN for AWS Load Balancer Controller. |
+| <a name="output_alb_controller_service_account_name"></a> [alb\_controller\_service\_account\_name](#output\_alb\_controller\_service\_account\_name) | Kubernetes ServiceAccount name for AWS Load Balancer Controller. |
 | <a name="output_alb_controller_service_account_subject"></a> [alb\_controller\_service\_account\_subject](#output\_alb\_controller\_service\_account\_subject) | Kubernetes service account subject for AWS Load Balancer Controller. |
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | EKS cluster name from eks-core remote state. |
 | <a name="output_source_eks_core_state_key"></a> [source\_eks\_core\_state\_key](#output\_source\_eks\_core\_state\_key) | S3 state key used as eks-core remote state source. |

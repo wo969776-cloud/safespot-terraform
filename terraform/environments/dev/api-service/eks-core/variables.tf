@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "ap-northeast-2"
 }
 
+variable "project" {
+  description = "Project name."
+  type        = string
+  default     = "safespot"
+}
+
 variable "env" {
   description = "Environment name."
   type        = string

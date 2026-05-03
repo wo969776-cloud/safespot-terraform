@@ -1,4 +1,5 @@
-env = "dev"
+project = "safespot"
+env     = "dev"
 
 remote_state_bucket = "safespot-terraform-state"
 network_state_key   = "environments/dev/network/terraform.tfstate"

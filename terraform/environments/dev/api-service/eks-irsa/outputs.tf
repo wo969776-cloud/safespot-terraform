@@ -27,3 +27,13 @@ output "alb_controller_service_account_subject" {
   description = "Kubernetes service account subject for AWS Load Balancer Controller."
   value       = module.alb_controller_irsa.service_account_subject
 }
+
+output "alb_controller_namespace" {
+  description = "Kubernetes namespace for AWS Load Balancer Controller."
+  value       = var.alb_controller_namespace
+}
+
+output "alb_controller_service_account_name" {
+  description = "Kubernetes ServiceAccount name for AWS Load Balancer Controller."
+  value       = var.alb_controller_service_account_name
+}

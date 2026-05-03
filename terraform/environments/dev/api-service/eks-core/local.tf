@@ -1,10 +1,12 @@
 locals {
   common_tags = {
-    Project     = "safespot"
+    Project     = var.project
     Environment = var.env
     Domain      = "api-service"
     Component   = "eks-core"
     ManagedBy   = "terraform"
+    Service     = var.project
+    CostCenter  = "${var.project}-${var.env}"
   }
 
   vpc_id                 = data.terraform_remote_state.network.outputs.vpc_id
