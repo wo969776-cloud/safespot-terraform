@@ -24,7 +24,14 @@ variable "ssm_parameters" {
   sensitive = true
 }
 
-variable "common_tags" {
-  type    = map(string)
-  default = {}
+variable "remote_state_bucket" {
+  description = "S3 bucket name for Terraform remote state."
+  type        = string
+  default     = "safespot-terraform-state"
+}
+
+variable "data_state_key" {
+  description = "S3 object key for data Terraform state."
+  type        = string
+  default     = "environments/dev/data/terraform.tfstate"
 }

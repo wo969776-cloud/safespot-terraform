@@ -17,7 +17,7 @@ variable "parameters" {
     condition = alltrue([
       for p in values(var.parameters) : contains(["String", "StringList", "SecureString"], p.type)
     ])
-    error_message = "parameter type must be String or SecureString."
+    error_message = "parameter type must be String, StringList, or SecureString."
   }
 }
 

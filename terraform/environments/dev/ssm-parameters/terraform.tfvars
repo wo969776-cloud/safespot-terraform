@@ -2,6 +2,9 @@ aws_region = "ap-northeast-2"
 project    = "safespot"
 env        = "dev"
 
+remote_state_bucket = "safespot-terraform-state"
+data_state_key      = "environments/dev/data/terraform.tfstate"
+
 ssm_parameters = {
   "common/aws-region" = {
     value       = "ap-northeast-2"
@@ -14,17 +17,4 @@ ssm_parameters = {
     type        = "String"
     description = "Spring profile"
   }
-
-  "common/redis-port" = {
-    value       = "6379"
-    type        = "String"
-    description = "Redis port"
-  }
-}
-
-common_tags = {
-  Project     = "SafeSpot"
-  Environment = "dev"
-  ManagedBy   = "Terraform"
-  Area        = "ssm-parameters"
 }

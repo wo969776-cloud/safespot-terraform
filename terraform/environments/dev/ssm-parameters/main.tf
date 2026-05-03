@@ -4,14 +4,10 @@ module "ssm_parameters" {
   project = var.project
   env     = var.env
 
-  parameters = {
-    for key, param in var.ssm_parameters : key => {
-      name        = "/safespot/${var.env}/${key}"
-      value       = param.value
-      type        = lookup(param, "type", "String")
-      description = lookup(param, "description", "")
-    }
-  }
+  parameters = merge(
+    var.ssm_parameters,
+    local.remote_state_parameters
+  )
 
   use_custom_kms_key = false
   kms_key_id         = null

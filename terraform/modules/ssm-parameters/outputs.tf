@@ -23,3 +23,8 @@ output "string_parameter_names" {
     if var.parameters[k].type == "String"
   }
 }
+
+output "parameter_name_prefix" {
+  description = "SSM parameter path prefix."
+  value       = "/${var.project}/${var.env}"
+}
