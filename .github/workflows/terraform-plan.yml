@@ -1,0 +1,121 @@
+name: Terraform Plan
+
+# ---------------------------------------------------------------------------
+# 목적: main 브랜치 merge 후 실제 변경될 인프라를 미리 확인한다.
+#
+# 실행 조건: main 브랜치 push 시
+#            terraform/ 또는 이 workflow 파일이 변경된 경우에만 실행
+#
+# 단계별 역할:
+#   init - S3 backend + DynamoDB lock 연결 후 초기화
+#   plan - 현재 state 와 코드 차이를 계산해 변경 예정 리소스 출력
+#          실제 apply 는 하지 않음
+#
+# AWS 자격증명 필요:
+#   plan 은 실제 AWS 상태를 읽어야 하므로 OIDC 인증이 필요
+#   사용 secret: TF_AWS_ROLE_ARN
+#     → Terraform 전용 IAM Role ARN
+#     → APP_AWS_ROLE_ARN(애플리케이션 CI용)과 분리 운영
+#
+# PR Check 와의 차이:
+#   PR Check = backend 없이 fmt + validate (빠름, AWS 불필요)
+#   Plan     = backend 연결 후 실제 변경 계획 확인 (AWS 필요)
+#
+# matrix 환경 (CODEOWNERS 기준 7개):
+#   network / data / api-service / front-edge / async-worker / cicd / observability
+#
+# [수정] matrix 환경 전면 교체
+#   - 기존: ops, cicd (2개)
+#   - 변경: CODEOWNERS 의 실제 environments 디렉터리 기준 7개로 확장
+#   - ops 제거: CODEOWNERS 에 존재하지 않는 디렉터리명
+#
+# fail-fast: false
+#   한 환경의 plan 실패가 다른 환경 plan 을 중단시키지 않음
+#   각 환경 결과를 독립적으로 확인 가능
+# ---------------------------------------------------------------------------
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "terraform/**"
+      - ".github/workflows/terraform-plan.yml"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-2
+  TF_VERSION: "1.7.0"
+
+jobs:
+  terraform-plan:
+    name: Terraform plan - ${{ matrix.name }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: network
+            path: terraform/environments/dev/network
+          - name: data
+            path: terraform/environments/dev/data
+          - name: api-service
+            path: terraform/environments/dev/api-service
+          - name: front-edge
+            path: terraform/environments/dev/front-edge
+          - name: async-worker
+            path: terraform/environments/dev/async-worker
+          - name: cicd
+            path: terraform/environments/dev/cicd
+          - name: observability
+            path: terraform/environments/dev/observability
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      # -----------------------------------------------------------------------
+      # AWS OIDC 인증
+      #
+      # plan 은 실제 AWS state 를 읽으므로 자격증명이 필요
+      # OIDC 방식: 장기 자격증명(Access Key) 없이 역할 assume
+      # 사용 secret: TF_AWS_ROLE_ARN
+      #   → Terraform 전용 IAM Role ARN
+      #   → APP_AWS_ROLE_ARN(애플리케이션 CI용)과 분리 운영
+      # -----------------------------------------------------------------------
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.TF_AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # -----------------------------------------------------------------------
+      # terraform init
+      #
+      # backend 연결 포함: S3 state 파일 + DynamoDB lock 테이블 사용
+      # -input=false: CI 환경에서 대화형 입력 비활성화
+      # -----------------------------------------------------------------------
+      - name: Terraform init
+        working-directory: ${{ matrix.path }}
+        run: terraform init -input=false
+
+      # -----------------------------------------------------------------------
+      # terraform plan
+      #
+      # -no-color: CI 로그에서 ANSI 색상 코드 제거
+      # -input=false: 대화형 입력 비활성화
+      # 실제 apply 없음 → 인프라 변경 없음
+      # -----------------------------------------------------------------------
+      - name: Terraform plan
+        working-directory: ${{ matrix.path }}
+        run: terraform plan -no-color -input=false

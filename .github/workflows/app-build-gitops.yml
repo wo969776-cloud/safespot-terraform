@@ -1,0 +1,516 @@
+name: App Build Push Update GitOps
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "api-core/**"
+      - "api-public-read/**"
+      - "external-ingestion/**"
+      - "async-worker/**"
+      - ".github/workflows/app-build-gitops.yml"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-northeast-2
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  ECR_NAME_PREFIX: safespot-dev-ops-ecr
+  OPS_REPO: project-safespot/safespot-ops
+
+concurrency:
+  group: gitops-update
+  cancel-in-progress: false
+
+# ---------------------------------------------------------------------------
+# 수정 이력
+#
+# [수정] update-gitops job if 조건에 build result 확인 추가
+#   - 기존: if: needs.detect-changes.outputs.{service} == 'true'
+#   - 문제: build-and-push job 이 실패해도 update-gitops 가 실행됨
+#           빌드 실패한 이미지 tag 를 ops repo 에 반영하게 됨
+#   - 수정: needs.build-and-push-{service}.result == 'success' 조건 추가
+#           build 가 실제로 성공한 경우에만 GitOps values 수정
+#
+# [확인] IMAGE_REPOSITORY export 선언 → yq strenv() 정상 동작 ✅
+# [확인] IMAGE_TAG job env 블록 선언 → shell export 상태 → strenv() 정상 ✅
+# [확인] retry loop: pull → 수정 → commit → push → 실패 시 reset --soft HEAD~1 ✅
+# [확인] PAT(OPS_REPO_TOKEN) 사용으로 외부 repo push → AWS credentials 불필요 ✅
+# ---------------------------------------------------------------------------
+
+jobs:
+  # =========================================================================
+  # detect-changes
+  # =========================================================================
+  detect-changes:
+    name: Detect changed services
+    runs-on: ubuntu-latest
+
+    outputs:
+      image_tag: ${{ steps.meta.outputs.image_tag }}
+      api_core: ${{ steps.filter.outputs.api_core }}
+      api_public_read: ${{ steps.filter.outputs.api_public_read }}
+      external_ingestion: ${{ steps.filter.outputs.external_ingestion }}
+      async_worker: ${{ steps.filter.outputs.async_worker }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set image tag
+        id: meta
+        run: echo "image_tag=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Detect service changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            api_core:
+              - 'api-core/**'
+            api_public_read:
+              - 'api-public-read/**'
+            external_ingestion:
+              - 'external-ingestion/**'
+            async_worker:
+              - 'async-worker/**'
+
+  # =========================================================================
+  # build-and-push: api-core
+  # =========================================================================
+  build-and-push-api-core:
+    name: Build and push - api-core
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.api_core == 'true'
+
+    steps:
+      - name: Checkout application repo
+        uses: actions/checkout@v4
+
+      - name: Set image URI
+        run: |
+          IMAGE_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_NAME_PREFIX}-api-core:${{ needs.detect-changes.outputs.image_tag }}"
+          echo "IMAGE_URI=${IMAGE_URI}" >> "$GITHUB_ENV"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.APP_AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: api-core
+          file: api-core/Dockerfile
+          push: true
+          tags: ${{ env.IMAGE_URI }}
+          cache-from: type=gha,scope=api-core
+          cache-to: type=gha,mode=max,scope=api-core
+
+  # =========================================================================
+  # build-and-push: api-public-read
+  # =========================================================================
+  build-and-push-api-public-read:
+    name: Build and push - api-public-read
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.api_public_read == 'true'
+
+    steps:
+      - name: Checkout application repo
+        uses: actions/checkout@v4
+
+      - name: Set image URI
+        run: |
+          IMAGE_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_NAME_PREFIX}-api-public-read:${{ needs.detect-changes.outputs.image_tag }}"
+          echo "IMAGE_URI=${IMAGE_URI}" >> "$GITHUB_ENV"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.APP_AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: api-public-read
+          file: api-public-read/Dockerfile
+          push: true
+          tags: ${{ env.IMAGE_URI }}
+          cache-from: type=gha,scope=api-public-read
+          cache-to: type=gha,mode=max,scope=api-public-read
+
+  # =========================================================================
+  # build-and-push: external-ingestion
+  # =========================================================================
+  build-and-push-external-ingestion:
+    name: Build and push - external-ingestion
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.external_ingestion == 'true'
+
+    steps:
+      - name: Checkout application repo
+        uses: actions/checkout@v4
+
+      - name: Set image URI
+        run: |
+          IMAGE_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_NAME_PREFIX}-external-ingestion:${{ needs.detect-changes.outputs.image_tag }}"
+          echo "IMAGE_URI=${IMAGE_URI}" >> "$GITHUB_ENV"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.APP_AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: external-ingestion
+          file: external-ingestion/Dockerfile
+          push: true
+          tags: ${{ env.IMAGE_URI }}
+          cache-from: type=gha,scope=external-ingestion
+          cache-to: type=gha,mode=max,scope=external-ingestion
+
+  # =========================================================================
+  # build-and-push: async-worker
+  # =========================================================================
+  build-and-push-async-worker:
+    name: Build and push - async-worker
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.async_worker == 'true'
+
+    steps:
+      - name: Checkout application repo
+        uses: actions/checkout@v4
+
+      - name: Set image URI
+        run: |
+          IMAGE_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_NAME_PREFIX}-async-worker:${{ needs.detect-changes.outputs.image_tag }}"
+          echo "IMAGE_URI=${IMAGE_URI}" >> "$GITHUB_ENV"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.APP_AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: async-worker
+          file: async-worker/Dockerfile
+          push: true
+          tags: ${{ env.IMAGE_URI }}
+          cache-from: type=gha,scope=async-worker
+          cache-to: type=gha,mode=max,scope=async-worker
+
+  # =========================================================================
+  # update-gitops: api-core
+  #
+  # 대상 파일: charts/api-core/values-dev.yaml
+  # 수정 키:   .image.repository / .image.tag
+  #
+  # if 조건:
+  #   - detect-changes 에서 변경 감지됨 (== 'true')
+  #   - build-and-push 가 실제로 성공함 (== 'success')
+  #   두 조건 모두 충족해야 실행
+  #   → build 실패 시 잘못된 tag 가 ops repo 에 반영되는 것을 방지
+  #
+  # retry 구조:
+  #   pull --rebase → 파일 수정 재적용 → commit → push
+  #   push 실패 시 git reset --soft HEAD~1 → sleep 5 → 재시도
+  # =========================================================================
+  update-gitops-api-core:
+    name: Update GitOps values - api-core
+    runs-on: ubuntu-latest
+    needs:
+      - detect-changes
+      - build-and-push-api-core
+    if: >-
+      needs.detect-changes.outputs.api_core == 'true' &&
+      needs.build-and-push-api-core.result == 'success'
+
+    steps:
+      - name: Checkout ops repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.OPS_REPO }}
+          token: ${{ secrets.OPS_REPO_TOKEN }}
+          ref: main
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Commit and push with retry
+        env:
+          IMAGE_TAG: ${{ needs.detect-changes.outputs.image_tag }}
+          VALUES_FILE: charts/api-core/values-dev.yaml
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # export 필수: yq strenv() 는 shell export 된 환경변수만 읽음
+          export IMAGE_REPOSITORY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_NAME_PREFIX}-api-core"
+
+          for i in 1 2 3; do
+            git pull --rebase origin main
+
+            yq -i '.image.repository = strenv(IMAGE_REPOSITORY)' "${VALUES_FILE}"
+            yq -i '.image.tag = strenv(IMAGE_TAG)' "${VALUES_FILE}"
+
+            git add "${VALUES_FILE}"
+
+            if git diff --cached --quiet; then
+              echo "No GitOps changes for api-core. Skipping."
+              exit 0
+            fi
+
+            git commit -m "chore: update api-core image tag to ${IMAGE_TAG}"
+
+            if git push origin main; then
+              echo "Push succeeded on attempt ${i}."
+              exit 0
+            fi
+
+            echo "Push attempt ${i} failed. Retrying in 5s..."
+            git reset --soft HEAD~1
+            sleep 5
+          done
+
+          echo "All push attempts failed."
+          exit 1
+
+  # =========================================================================
+  # update-gitops: api-public-read
+  # 대상 파일: charts/api-public-read/values-dev.yaml
+  # =========================================================================
+  update-gitops-api-public-read:
+    name: Update GitOps values - api-public-read
+    runs-on: ubuntu-latest
+    needs:
+      - detect-changes
+      - build-and-push-api-public-read
+    if: >-
+      needs.detect-changes.outputs.api_public_read == 'true' &&
+      needs.build-and-push-api-public-read.result == 'success'
+
+    steps:
+      - name: Checkout ops repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.OPS_REPO }}
+          token: ${{ secrets.OPS_REPO_TOKEN }}
+          ref: main
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Commit and push with retry
+        env:
+          IMAGE_TAG: ${{ needs.detect-changes.outputs.image_tag }}
+          VALUES_FILE: charts/api-public-read/values-dev.yaml
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          export IMAGE_REPOSITORY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_NAME_PREFIX}-api-public-read"
+
+          for i in 1 2 3; do
+            git pull --rebase origin main
+
+            yq -i '.image.repository = strenv(IMAGE_REPOSITORY)' "${VALUES_FILE}"
+            yq -i '.image.tag = strenv(IMAGE_TAG)' "${VALUES_FILE}"
+
+            git add "${VALUES_FILE}"
+
+            if git diff --cached --quiet; then
+              echo "No GitOps changes for api-public-read. Skipping."
+              exit 0
+            fi
+
+            git commit -m "chore: update api-public-read image tag to ${IMAGE_TAG}"
+
+            if git push origin main; then
+              echo "Push succeeded on attempt ${i}."
+              exit 0
+            fi
+
+            echo "Push attempt ${i} failed. Retrying in 5s..."
+            git reset --soft HEAD~1
+            sleep 5
+          done
+
+          echo "All push attempts failed."
+          exit 1
+
+  # =========================================================================
+  # update-gitops: external-ingestion
+  # 대상 파일: charts/external-ingestion/values-dev.yaml
+  # =========================================================================
+  update-gitops-external-ingestion:
+    name: Update GitOps values - external-ingestion
+    runs-on: ubuntu-latest
+    needs:
+      - detect-changes
+      - build-and-push-external-ingestion
+    if: >-
+      needs.detect-changes.outputs.external_ingestion == 'true' &&
+      needs.build-and-push-external-ingestion.result == 'success'
+
+    steps:
+      - name: Checkout ops repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.OPS_REPO }}
+          token: ${{ secrets.OPS_REPO_TOKEN }}
+          ref: main
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Commit and push with retry
+        env:
+          IMAGE_TAG: ${{ needs.detect-changes.outputs.image_tag }}
+          VALUES_FILE: charts/external-ingestion/values-dev.yaml
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          export IMAGE_REPOSITORY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_NAME_PREFIX}-external-ingestion"
+
+          for i in 1 2 3; do
+            git pull --rebase origin main
+
+            yq -i '.image.repository = strenv(IMAGE_REPOSITORY)' "${VALUES_FILE}"
+            yq -i '.image.tag = strenv(IMAGE_TAG)' "${VALUES_FILE}"
+
+            git add "${VALUES_FILE}"
+
+            if git diff --cached --quiet; then
+              echo "No GitOps changes for external-ingestion. Skipping."
+              exit 0
+            fi
+
+            git commit -m "chore: update external-ingestion image tag to ${IMAGE_TAG}"
+
+            if git push origin main; then
+              echo "Push succeeded on attempt ${i}."
+              exit 0
+            fi
+
+            echo "Push attempt ${i} failed. Retrying in 5s..."
+            git reset --soft HEAD~1
+            sleep 5
+          done
+
+          echo "All push attempts failed."
+          exit 1
+
+  # =========================================================================
+  # update-gitops: async-worker
+  # 대상 파일: charts/async-worker/values-dev.yaml
+  # =========================================================================
+  update-gitops-async-worker:
+    name: Update GitOps values - async-worker
+    runs-on: ubuntu-latest
+    needs:
+      - detect-changes
+      - build-and-push-async-worker
+    if: >-
+      needs.detect-changes.outputs.async_worker == 'true' &&
+      needs.build-and-push-async-worker.result == 'success'
+
+    steps:
+      - name: Checkout ops repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.OPS_REPO }}
+          token: ${{ secrets.OPS_REPO_TOKEN }}
+          ref: main
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/download/v4.44.3/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Commit and push with retry
+        env:
+          IMAGE_TAG: ${{ needs.detect-changes.outputs.image_tag }}
+          VALUES_FILE: charts/async-worker/values-dev.yaml
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          export IMAGE_REPOSITORY="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_NAME_PREFIX}-async-worker"
+
+          for i in 1 2 3; do
+            git pull --rebase origin main
+
+            yq -i '.image.repository = strenv(IMAGE_REPOSITORY)' "${VALUES_FILE}"
+            yq -i '.image.tag = strenv(IMAGE_TAG)' "${VALUES_FILE}"
+
+            git add "${VALUES_FILE}"
+
+            if git diff --cached --quiet; then
+              echo "No GitOps changes for async-worker. Skipping."
+              exit 0
+            fi
+
+            git commit -m "chore: update async-worker image tag to ${IMAGE_TAG}"
+
+            if git push origin main; then
+              echo "Push succeeded on attempt ${i}."
+              exit 0
+            fi
+
+            echo "Push attempt ${i} failed. Retrying in 5s..."
+            git reset --soft HEAD~1
+            sleep 5
+          done
+
+          echo "All push attempts failed."
+          exit 1
