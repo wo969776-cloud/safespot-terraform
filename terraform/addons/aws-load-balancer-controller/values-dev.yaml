@@ -1,0 +1,33 @@
+# Chart: aws-load-balancer-controller 1.9.2 / App: v2.9.2
+# Repo: https://aws.github.io/eks-charts
+# role-arn: run scripts/init-addon-values.sh to populate from Terraform output
+#   source: terraform -chdir=terraform/environments/dev/api-service/eks-irsa output -raw alb_controller_irsa_role_arn
+clusterName: safespot-dev-eks
+
+serviceAccount:
+  create: true
+  name: aws-load-balancer-controller
+  annotations:
+    eks.amazonaws.com/role-arn: ""
+
+region: ap-northeast-2
+# vpcId is auto-detected from EC2 instance metadata when running in-cluster
+
+replicaCount: 2
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 512Mi
+
+nodeSelector:
+  role: system
+
+tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+
+podDisruptionBudget:
+  maxUnavailable: 1

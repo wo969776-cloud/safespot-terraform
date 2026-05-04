@@ -1,0 +1,26 @@
+# Chart: metrics-server 3.12.2 (https://kubernetes-sigs.github.io/metrics-server/)
+replicas: 2
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    memory: 256Mi
+
+metrics:
+  enabled: true
+
+serviceMonitor:
+  enabled: false
+
+nodeSelector:
+  role: system
+
+tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+
+podDisruptionBudget:
+  enabled: true
+  maxUnavailable: 1
