@@ -47,3 +47,4 @@ output "lambda_sg_id" {
   description = "Lambda Security Group ID"
   value       = module.sg.lambda_sg_id
 }
+

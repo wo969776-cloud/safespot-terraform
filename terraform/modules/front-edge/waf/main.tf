@@ -1,7 +1,7 @@
 resource "aws_wafv2_web_acl" "main" {
   provider    = aws.us_east_1
   name        = "${var.project}-${var.environment}-waf"
-  description = "SafeSpot WAF - CloudFront 앞단 악성 트래픽 차단"
+  description = "SafeSpot WAF - CloudFront -CloudFront protection"
   scope       = "CLOUDFRONT"
 
   default_action {

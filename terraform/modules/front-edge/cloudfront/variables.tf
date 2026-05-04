@@ -47,3 +47,7 @@ variable "common_tags" {
   description = "Common tags"
   type        = map(string)
 }
+variable "route53_zone_id" {
+  description = "Route53 Zone ID"
+  type        = string
+}

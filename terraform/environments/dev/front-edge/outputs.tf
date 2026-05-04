@@ -55,3 +55,12 @@ output "frontend_bucket_domain" {
 #   description = "API origin 도메인 (api-service/k8s-manifest 참조용)"
 #   value       = module.cloudfront.api_origin_domain_name
 # }
+output "cloudfront_distribution_id" {
+  description = "CloudFront distribution ID"
+  value       = module.cloudfront.distribution_id
+}
+
+output "waf_acl_name" {
+  description = "WAF ACL name"
+  value       = module.waf.acl_name
+}
