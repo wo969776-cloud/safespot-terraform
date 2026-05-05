@@ -58,12 +58,10 @@ ArgoCD reads Helm values from this repository (`safespot-terraform`) via multi-s
 | `external-secrets-operator` | charts.external-secrets.io v0.11.0 | `external-secrets` | 1 |
 | `metrics-server` | kubernetes-sigs.github.io/metrics-server v3.12.2 | `kube-system` | 1 |
 | `karpenter-configs` | local `terraform/addons/karpenter/chart` (wrapper) | `kube-system` | 2 |
+| `eso-configs` | local `terraform/addons/external-secrets-operator/chart` (wrapper) | `external-secrets` | 2 |
 | `external-dns` | kubernetes-sigs.github.io/external-dns v1.15.0 | `external-dns` | 2 |
 
-`karpenter-configs` installs EC2NodeClass and NodePool via a local wrapper Helm chart (`terraform/addons/karpenter/chart/`). All configuration is managed through `chart/values-dev.yaml`.
-
-Post-install manual step (one-time, after ESO is running):
-- `kubectl apply -f terraform/addons/external-secrets-operator/cluster-secret-store-dev.yaml`
+`karpenter-configs` installs EC2NodeClass and NodePool via a local wrapper Helm chart (`terraform/addons/karpenter/chart/`). `eso-configs` installs ClusterSecretStore via a local wrapper Helm chart (`terraform/addons/external-secrets-operator/chart/`). All configuration is managed through each chart's `values-dev.yaml`. No manual `kubectl apply` is needed.
 
 ---
 

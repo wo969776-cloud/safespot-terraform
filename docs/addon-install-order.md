@@ -85,16 +85,10 @@ ArgoCD sync-waves control the order. Apps with lower wave numbers sync first.
 | 1 | external-secrets-operator | Requires IRSA role from eks-addons-irsa |
 | 1 | metrics-server | No IRSA required |
 | 2 | karpenter-configs | EC2NodeClass + NodePool via wrapper chart; requires Karpenter CRDs (wave 1) |
+| 2 | eso-configs | ClusterSecretStore via wrapper chart; requires ESO CRDs (wave 1) |
 | 2 | external-dns | Requires IRSA role from eks-addons-irsa; depends on ALB Controller being ready |
 
-**Post-sync manual step (one-time, after ESO is running):**
-
-```bash
-# ESO ClusterSecretStore (requires ESO CRDs to be installed first)
-kubectl apply -f terraform/addons/external-secrets-operator/cluster-secret-store-dev.yaml
-```
-
-Karpenter EC2NodeClass and NodePools are managed by ArgoCD (`karpenter-configs` Application, wave 2). No manual `kubectl apply` is needed.
+Karpenter EC2NodeClass/NodePools and ESO ClusterSecretStore are both managed by ArgoCD (wave 2 wrapper charts). No manual `kubectl apply` is needed.
 
 ---
 

@@ -1,0 +1,8 @@
+clusterSecretStore:
+  name: aws-secrets-manager
+  provider:
+    region: ap-northeast-2
+    service: SecretsManager
+  serviceAccountRef:
+    name: external-secrets
+    namespace: external-secrets

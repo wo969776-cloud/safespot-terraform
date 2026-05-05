@@ -1,40 +1,42 @@
 # External Secrets Operator (ESO)
 
-## Chart
+## Charts
 
-- **Repository**: https://charts.external-secrets.io
-- **Chart**: external-secrets
-- **Chart Version**: 0.11.0
+| Chart | Source | Version | Managed by |
+|---|---|---|---|
+| Controller | `https://charts.external-secrets.io` | 0.11.0 | `argocd/external-secrets-operator.yaml` (wave 1) |
+| ClusterSecretStore | local `chart/` (this directory) | 0.1.0 | `argocd/eso-configs.yaml` (wave 2) |
 
 ## CRD Installation
 
-`installCRDs: true` is set so CRDs (`ExternalSecret`, `ClusterSecretStore`, `SecretStore`, etc.) are installed as part of the Helm release. On upgrades, ensure CRDs are compatible with the new chart version before upgrading.
+`installCRDs: true` is set in `values-dev.yaml` so CRDs (`ExternalSecret`, `ClusterSecretStore`, etc.) are installed with the controller chart. On upgrades, verify CRD compatibility before upgrading.
 
-## ClusterSecretStore
+## Wrapper Chart (`chart/`)
 
-`cluster-secret-store-dev.yaml` defines a cluster-scoped secret store backed by AWS Secrets Manager. Apply this manifest **after** ESO is fully running and CRDs are established:
-
-```bash
-kubectl apply -f terraform/addons/external-secrets-operator/cluster-secret-store-dev.yaml
-```
-
-The store uses IRSA via the `external-secrets` service account in the `external-secrets` namespace.
-
-## IRSA Requirement
-
-ESO requires an IAM Role for Service Accounts (IRSA) provisioned by Terraform in:
+`ClusterSecretStore` is defined as a Helm template inside `chart/`. Values are managed in `chart/values-dev.yaml`.
 
 ```
-terraform/environments/dev/api-service/eks-addons-irsa/
+chart/
+├── Chart.yaml
+├── values.yaml          # defaults (region, service, serviceAccountRef)
+├── values-dev.yaml      # dev environment overrides
+└── templates/
+    └── clustersecretstore-aws.yaml
 ```
 
-The role `safespot-dev-external-secrets-irsa` grants:
-- `secretsmanager:GetSecretValue`, `secretsmanager:DescribeSecret` on all Secrets Manager resources
-- `ssm:GetParameter`, `ssm:GetParameters`, `ssm:GetParametersByPath` on all SSM Parameter Store resources
+### Configurable values
 
-## IRSA Role ARN
+| Field | Description | Default |
+|---|---|---|
+| `clusterSecretStore.name` | Name referenced by `ExternalSecret.clusterSecretStoreRef.name` | `aws-secrets-manager` |
+| `clusterSecretStore.provider.region` | AWS region | `ap-northeast-2` |
+| `clusterSecretStore.provider.service` | Backend: `SecretsManager` or `ParameterStore` | `SecretsManager` |
+| `clusterSecretStore.serviceAccountRef.name` | ESO controller ServiceAccount name | `external-secrets` |
+| `clusterSecretStore.serviceAccountRef.namespace` | ESO controller namespace | `external-secrets` |
 
-Run the init script after Terraform apply to populate the role ARN in `values-dev.yaml`:
+## IRSA
+
+ESO requires an IAM Role for Service Accounts provisioned by Terraform (`eks-addons-irsa` environment). Run the init script after Terraform apply to populate the role ARN in `values-dev.yaml`:
 
 ```bash
 bash scripts/init-addon-values.sh
@@ -42,9 +44,24 @@ bash scripts/init-addon-values.sh
 
 Source: `terraform -chdir=terraform/environments/dev/api-service/eks-addons-irsa output -raw external_secrets_irsa_role_arn`
 
+The role `safespot-dev-external-secrets-irsa` grants:
+- `secretsmanager:GetSecretValue`, `secretsmanager:DescribeSecret`
+- `ssm:GetParameter`, `ssm:GetParameters`, `ssm:GetParametersByPath`
+
 See `docs/irsa-contract.md` for the full binding table.
 
 ## Deployment
 
-This chart is deployed via ArgoCD (sync-wave: 1). See `argocd/external-secrets-operator.yaml`.
-App deploy repos reference this store using `ExternalSecret` resources pointing to `clusterSecretStoreRef.name: aws-secrets-manager`.
+Both ArgoCD Applications are picked up automatically by `argocd/root-platform-addons.yaml` (app-of-apps).
+
+```
+Wave 1: argocd/external-secrets-operator.yaml  → ESO controller + CRD install
+Wave 2: argocd/eso-configs.yaml                → ClusterSecretStore sync
+```
+
+App deploy repos reference the store with:
+```yaml
+clusterSecretStoreRef:
+  name: aws-secrets-manager
+  kind: ClusterSecretStore
+```
