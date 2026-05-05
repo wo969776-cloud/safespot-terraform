@@ -63,5 +63,34 @@ set_role_arn "terraform/addons/external-dns/values-dev.yaml" "${EXTERNAL_DNS_ROL
 set_role_arn "terraform/addons/external-secrets-operator/values-dev.yaml" "${EXTERNAL_SECRETS_ROLE_ARN}"
 
 echo ""
-echo "Done. Review and commit:"
+echo "==> Checking ArgoCD targetRevision vs current branch..."
+
+CURRENT_BRANCH=$(git -C "${REPO_ROOT}" rev-parse --abbrev-ref HEAD)
+
+# Collect branch-name targetRevisions from argocd/ manifests.
+# Excludes: HEAD, semver strings (e.g. 1.9.2, v1.16.0).
+BRANCH_REVISIONS=$(grep -h "targetRevision:" "${REPO_ROOT}/argocd/"*.yaml 2>/dev/null \
+  | awk '{print $2}' \
+  | sort -u \
+  | grep -v '^HEAD$' \
+  | grep -vE '^v?[0-9]+\.[0-9]+')
+
+WARNED=false
+while IFS= read -r rev; do
+  [[ -z "$rev" ]] && continue
+  if [[ "$rev" != "$CURRENT_BRANCH" ]]; then
+    echo "WARNING: ArgoCD targetRevision (${rev}) and current branch (${CURRENT_BRANCH}) differ. ArgoCD may not read updated values."
+    WARNED=true
+  fi
+done <<< "$BRANCH_REVISIONS"
+
+if [[ "${WARNED}" == "false" ]]; then
+  echo "  targetRevision matches current branch (${CURRENT_BRANCH}). OK"
+fi
+
+echo ""
+echo "Done. Commit and push the updated values files so ArgoCD picks up the changes:"
 echo "  git diff terraform/addons/"
+echo "  git add terraform/addons/"
+echo "  git commit -m 'chore: update IRSA role ARNs in addon values'"
+echo "  git push origin ${CURRENT_BRANCH}"
