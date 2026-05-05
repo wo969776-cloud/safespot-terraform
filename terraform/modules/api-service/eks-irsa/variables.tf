@@ -24,9 +24,9 @@ variable "service_account_name" {
 }
 
 variable "managed_policy_arns" {
-  description = "Managed IAM policy ARNs to attach to the IRSA role."
-  type        = list(string)
-  default     = []
+  description = "Managed policy ARNs to attach to the IRSA role. Map keys must be static."
+  type        = map(string)
+  default     = {}
 }
 
 variable "inline_policy_json" {

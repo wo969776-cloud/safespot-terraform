@@ -40,7 +40,8 @@ module "eks" {
     }
 
     vpc-cni = {
-      most_recent = true
+      most_recent    = true
+      before_compute = true
     }
 
     eks-pod-identity-agent = {
@@ -56,6 +57,9 @@ module "eks" {
   eks_managed_node_groups = {
     default = {
       name = var.eks_managed_node_group_name
+
+      iam_role_name            = var.node_iam_role_name
+      iam_role_use_name_prefix = false
 
       ami_type       = "AL2023_x86_64_STANDARD"
       instance_types = var.node_instance_types

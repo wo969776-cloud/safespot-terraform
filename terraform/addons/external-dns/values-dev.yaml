@@ -11,7 +11,8 @@ env:
 serviceAccount:
   create: true
   name: external-dns
-  annotations: {}
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::154335823230:role/safespot-dev-external-dns-irsa"
 
 sources:
   - ingress

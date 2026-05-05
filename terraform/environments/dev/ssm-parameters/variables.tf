@@ -21,7 +21,7 @@ variable "ssm_parameters" {
     description = optional(string)
   }))
 
-  sensitive = true
+  # sensitive = true
 }
 
 variable "remote_state_bucket" {

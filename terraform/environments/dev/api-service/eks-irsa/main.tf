@@ -19,9 +19,9 @@ module "alb_controller_irsa" {
   namespace            = var.alb_controller_namespace
   service_account_name = var.alb_controller_service_account_name
 
-  managed_policy_arns = [
-    aws_iam_policy.alb_controller.arn
-  ]
+  managed_policy_arns = {
+    alb_controller = aws_iam_policy.alb_controller.arn
+  }
 
   tags = local.common_tags
 }

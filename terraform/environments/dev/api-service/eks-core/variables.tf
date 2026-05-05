@@ -55,6 +55,11 @@ variable "eks_managed_node_group_name" {
   type        = string
 }
 
+variable "node_iam_role_name" {
+  description = "IAM role name for EKS managed node group."
+  type        = string
+}
+
 variable "node_instance_types" {
   description = "Instance types for the default EKS managed node group."
   type        = list(string)

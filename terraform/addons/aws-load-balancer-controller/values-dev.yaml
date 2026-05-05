@@ -7,7 +7,8 @@ clusterName: safespot-dev-eks
 serviceAccount:
   create: true
   name: aws-load-balancer-controller
-  annotations: {}
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::154335823230:role/safespot-dev-api-service-iam-role-alb-controller"
 
 region: ap-northeast-2
 # vpcId is auto-detected from EC2 instance metadata when running in-cluster

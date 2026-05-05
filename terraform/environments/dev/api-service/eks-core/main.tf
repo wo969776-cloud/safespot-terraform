@@ -15,10 +15,13 @@ module "eks_core" {
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
 
   eks_managed_node_group_name = var.eks_managed_node_group_name
-  node_instance_types         = var.node_instance_types
-  node_min_size               = var.node_min_size
-  node_max_size               = var.node_max_size
-  node_desired_size           = var.node_desired_size
+
+  node_iam_role_name = var.node_iam_role_name
+
+  node_instance_types = var.node_instance_types
+  node_min_size       = var.node_min_size
+  node_max_size       = var.node_max_size
+  node_desired_size   = var.node_desired_size
 
   tags = local.common_tags
 }

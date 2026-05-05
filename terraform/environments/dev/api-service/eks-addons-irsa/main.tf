@@ -57,8 +57,10 @@ module "external_dns_irsa" {
   oidc_provider        = local.oidc_provider
   namespace            = var.external_dns_namespace
   service_account_name = var.external_dns_service_account_name
-  managed_policy_arns  = [aws_iam_policy.external_dns.arn]
-  inline_policy_json   = null
+  managed_policy_arns = {
+    external_dns = aws_iam_policy.external_dns.arn
+  }
+  inline_policy_json = null
 
   tags = local.common_tags
 }
@@ -122,8 +124,10 @@ module "external_secrets_irsa" {
   oidc_provider        = local.oidc_provider
   namespace            = var.external_secrets_namespace
   service_account_name = var.external_secrets_service_account_name
-  managed_policy_arns  = [aws_iam_policy.external_secrets.arn]
-  inline_policy_json   = null
+  managed_policy_arns = {
+    external_secrets = aws_iam_policy.external_secrets.arn
+  }
+  inline_policy_json = null
 
   tags = local.common_tags
 }

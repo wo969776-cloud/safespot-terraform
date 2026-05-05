@@ -6,7 +6,8 @@ installCRDs: true
 serviceAccount:
   create: true
   name: external-secrets
-  annotations: {}
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::154335823230:role/safespot-dev-external-secrets-irsa"
 
 resources:
   requests:

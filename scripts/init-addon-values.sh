@@ -5,6 +5,7 @@
 # Usage:
 #   bash scripts/init-addon-values.sh
 #   bash scripts/init-addon-values.sh --dry-run   (print values without modifying files)
+#   bash scripts/init-addon-values.sh --skip-karpenter
 #
 # Requires: terraform (>= 1.6), yq (v4) or sed as fallback
 
@@ -13,10 +14,12 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 DRY_RUN=false
+SKIP_KARPENTER=false
 
 for arg in "$@"; do
   case "$arg" in
     --dry-run) DRY_RUN=true ;;
+    --skip-karpenter) SKIP_KARPENTER=true ;;
     *) echo "Unknown argument: $arg" && exit 1 ;;
   esac
 done
@@ -43,14 +46,19 @@ require_role_arn() {
 echo "==> Reading Terraform outputs..."
 
 ALB_ROLE_ARN=$(tf_output "terraform/environments/dev/api-service/eks-irsa" "alb_controller_irsa_role_arn")
-KARPENTER_ROLE_ARN=$(tf_output "terraform/environments/dev/api-service/eks-karpenter" "karpenter_controller_role_arn")
 EXTERNAL_DNS_ROLE_ARN=$(tf_output "terraform/environments/dev/api-service/eks-addons-irsa" "external_dns_irsa_role_arn")
 EXTERNAL_SECRETS_ROLE_ARN=$(tf_output "terraform/environments/dev/api-service/eks-addons-irsa" "external_secrets_irsa_role_arn")
 
 require_role_arn "ALB Controller role ARN" "${ALB_ROLE_ARN}"
-require_role_arn "Karpenter role ARN" "${KARPENTER_ROLE_ARN}"
 require_role_arn "ExternalDNS role ARN" "${EXTERNAL_DNS_ROLE_ARN}"
 require_role_arn "External Secrets role ARN" "${EXTERNAL_SECRETS_ROLE_ARN}"
+
+if [[ "${SKIP_KARPENTER}" == "false" ]]; then
+  KARPENTER_ROLE_ARN=$(tf_output "terraform/environments/dev/api-service/eks-karpenter" "karpenter_controller_role_arn")
+  require_role_arn "Karpenter role ARN" "${KARPENTER_ROLE_ARN}"
+else
+  KARPENTER_ROLE_ARN="(skipped)"
+fi
 
 echo ""
 echo "  ALB Controller      : ${ALB_ROLE_ARN}"
@@ -82,9 +90,14 @@ set_role_arn() {
 
 echo "==> Writing role ARNs to values files..."
 set_role_arn "terraform/addons/aws-load-balancer-controller/values-dev.yaml" "${ALB_ROLE_ARN}"
-set_role_arn "terraform/addons/karpenter/values-dev.yaml" "${KARPENTER_ROLE_ARN}"
 set_role_arn "terraform/addons/external-dns/values-dev.yaml" "${EXTERNAL_DNS_ROLE_ARN}"
 set_role_arn "terraform/addons/external-secrets-operator/values-dev.yaml" "${EXTERNAL_SECRETS_ROLE_ARN}"
+
+if [[ "${SKIP_KARPENTER}" == "false" ]]; then
+  set_role_arn "terraform/addons/karpenter/values-dev.yaml" "${KARPENTER_ROLE_ARN}"
+else
+  echo "  skipped: terraform/addons/karpenter/values-dev.yaml"
+fi
 
 echo ""
 echo "==> Checking ArgoCD targetRevision vs current branch..."

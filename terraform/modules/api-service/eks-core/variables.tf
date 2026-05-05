@@ -48,10 +48,15 @@ variable "eks_managed_node_group_name" {
   type        = string
 }
 
+variable "node_iam_role_name" {
+  description = "IAM role name for EKS managed node group."
+  type        = string
+}
+
 variable "node_min_size" {
   description = "Minimum number of nodes in the default managed node group."
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "node_max_size" {
@@ -63,7 +68,7 @@ variable "node_max_size" {
 variable "node_desired_size" {
   description = "Desired number of nodes in the default managed node group."
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "tags" {
