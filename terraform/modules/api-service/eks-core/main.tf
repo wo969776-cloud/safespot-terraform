@@ -23,7 +23,7 @@ module "eks" {
   create_node_security_group = false
   node_security_group_id     = var.node_security_group_id
 
-  cluster_endpoint_public_access = var.cluster_endpoint_public_access
+  cluster_endpoint_public_access  = var.cluster_endpoint_public_access
   cluster_endpoint_private_access = var.cluster_endpoint_private_access
 
   enable_cluster_creator_admin_permissions = true
