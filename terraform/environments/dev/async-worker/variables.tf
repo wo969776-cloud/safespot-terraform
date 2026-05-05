@@ -40,7 +40,7 @@ variable "max_receive_count" {
 }
 
 variable "lambda_filename" {
-  description = "Relative path to Lambda deployment ZIP (from terraform/environments/dev/async-worker/)"
+  description = "Path to async-worker Lambda deployment package (zip). Must be supplied at apply time via -var flag."
   type        = string
 }
 
@@ -61,4 +61,10 @@ variable "db_password" {
 variable "lambda_handler" {
   description = "Lambda handler class (fully qualified class::method)"
   type        = string
+}
+
+variable "metrics_namespace" {
+  description = "CloudWatch metrics namespace. Empty string disables CloudWatch metrics."
+  type        = string
+  default     = ""
 }

@@ -35,6 +35,19 @@ variable "max_receive_count" {
   default     = 5
 }
 
+# Lambda ESM이 폴링하므로 long polling(20s)으로 빈 응답을 줄인다
+variable "receive_wait_time_seconds" {
+  description = "SQS long polling wait time in seconds"
+  type        = number
+  default     = 20
+}
+
+variable "delay_seconds" {
+  description = "SQS message delivery delay in seconds"
+  type        = number
+  default     = 0
+}
+
 variable "common_tags" {
   description = "Common tags"
   type        = map(string)

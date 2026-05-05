@@ -52,7 +52,8 @@ module "lambda" {
   db_name     = data.terraform_remote_state.data.outputs.aurora_db_name
   db_user     = var.db_user
   db_password = var.db_password
-  redis_host  = data.terraform_remote_state.data.outputs.redis_primary_endpoint
+  redis_host        = data.terraform_remote_state.data.outputs.redis_primary_endpoint
+  metrics_namespace = var.metrics_namespace
 
   common_tags = local.common_tags
 }

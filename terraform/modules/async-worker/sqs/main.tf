@@ -34,6 +34,8 @@ resource "aws_sqs_queue" "cache_refresh" {
   name                       = "${var.project}-${var.environment}-async-worker-sqs-cache-refresh"
   visibility_timeout_seconds = var.visibility_timeout_seconds
   message_retention_seconds  = var.message_retention_seconds
+  receive_wait_time_seconds  = var.receive_wait_time_seconds
+  delay_seconds              = var.delay_seconds
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.cache_refresh_dlq.arn
@@ -54,6 +56,8 @@ resource "aws_sqs_queue" "readmodel_refresh" {
   name                       = "${var.project}-${var.environment}-async-worker-sqs-readmodel-refresh"
   visibility_timeout_seconds = var.visibility_timeout_seconds
   message_retention_seconds  = var.message_retention_seconds
+  receive_wait_time_seconds  = var.receive_wait_time_seconds
+  delay_seconds              = var.delay_seconds
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.readmodel_refresh_dlq.arn
@@ -71,6 +75,8 @@ resource "aws_sqs_queue" "environment_cache_refresh" {
   name                       = "${var.project}-${var.environment}-async-worker-sqs-environment-cache-refresh"
   visibility_timeout_seconds = var.visibility_timeout_seconds
   message_retention_seconds  = var.message_retention_seconds
+  receive_wait_time_seconds  = var.receive_wait_time_seconds
+  delay_seconds              = var.delay_seconds
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.environment_cache_refresh_dlq.arn

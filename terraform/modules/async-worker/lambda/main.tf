@@ -22,6 +22,21 @@ resource "aws_iam_role_policy_attachment" "vpc_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
 }
 
+# CloudWatch: METRICS_NAMESPACE 설정 시 PutMetricData 권한 필요
+resource "aws_iam_role_policy" "cloudwatch_metrics" {
+  name = "${var.project}-${var.environment}-async-worker-lambda-cloudwatch-policy"
+  role = aws_iam_role.async_worker.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["cloudwatch:PutMetricData"]
+      Resource = "*"
+    }]
+  })
+}
+
 # SQS: event source mapping 처리에 필요한 최소 권한
 resource "aws_iam_role_policy" "sqs" {
   name = "${var.project}-${var.environment}-async-worker-lambda-sqs-policy"
@@ -68,12 +83,14 @@ resource "aws_lambda_function" "async_worker" {
 
   environment {
     variables = {
-      DB_HOST     = var.db_host
-      DB_PORT     = tostring(var.db_port)
-      DB_NAME     = var.db_name
-      DB_USER     = var.db_user
-      DB_PASSWORD = var.db_password
-      REDIS_HOST  = var.redis_host
+      DB_HOST           = var.db_host
+      DB_PORT           = tostring(var.db_port)
+      DB_NAME           = var.db_name
+      DB_USER           = var.db_user
+      DB_PASSWORD       = var.db_password
+      REDIS_HOST        = var.redis_host
+      REDIS_PORT        = "6379"
+      METRICS_NAMESPACE = var.metrics_namespace
     }
   }
 

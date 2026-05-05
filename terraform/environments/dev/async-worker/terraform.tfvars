@@ -10,6 +10,7 @@ message_retention_seconds     = 345600
 dlq_message_retention_seconds = 1209600
 max_receive_count             = 5
 
-# Lambda 배포 패키지 (Terraform 실행 위치 기준 상대경로)
-lambda_filename = "../../../../services/async-worker/build/distributions/async-worker-lambda-0.0.1-SNAPSHOT.zip"
-lambda_handler  = "com.safespot.asyncworker.handler.AsyncWorkerHandler::handleRequest"
+# lambda_filename은 CI/CD 파이프라인에서 -var="lambda_filename=<path>" 으로 주입
+# 예: terraform apply -var="lambda_filename=./build/async-worker-lambda-0.0.1-SNAPSHOT.zip"
+lambda_handler    = "com.safespot.asyncworker.AsyncWorkerHandler::handleRequest"
+metrics_namespace = "SafeSpot/AsyncWorker"

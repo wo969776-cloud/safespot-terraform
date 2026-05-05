@@ -106,6 +106,13 @@ variable "redis_host" {
   type        = string
 }
 
+# 설정 시 CloudWatch로 metrics 전송. 미설정 시 SimpleMeterRegistry(no-op) fallback.
+variable "metrics_namespace" {
+  description = "CloudWatch metrics namespace. Empty string disables CloudWatch metrics."
+  type        = string
+  default     = ""
+}
+
 variable "common_tags" {
   description = "Common tags"
   type        = map(string)
