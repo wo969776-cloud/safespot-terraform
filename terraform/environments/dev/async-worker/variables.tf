@@ -13,12 +13,14 @@ variable "environment" {
   type        = string
 }
 
+# visibility_timeout은 lambda_timeout보다 커야 한다
 variable "visibility_timeout_seconds" {
   description = "SQS visibility timeout in seconds"
   type        = number
   default     = 180
 }
 
+# consumer 장애 시 이벤트 유실 방지를 위해 retention 확장
 variable "message_retention_seconds" {
   description = "SQS message retention period in seconds"
   type        = number
@@ -37,14 +39,26 @@ variable "max_receive_count" {
   default     = 5
 }
 
-variable "lambda_function_name" {
-  description = "Async-worker Lambda function name. Placeholder until Lambda Terraform resource is managed here."
+variable "lambda_filename" {
+  description = "Relative path to Lambda deployment ZIP (from terraform/environments/dev/async-worker/)"
   type        = string
-  default     = null
 }
 
-variable "lambda_reserved_concurrent_executions" {
-  description = "Reserved concurrency for async-worker Lambda. Placeholder until Lambda Terraform resource is managed here."
-  type        = number
-  default     = null
+# DB 인증 정보는 절대 tfvars에 작성하지 않는다
+# terraform apply -var="db_user=xxx" -var="db_password=yyy"
+variable "db_user" {
+  description = "Aurora DB username"
+  type        = string
+  sensitive   = true
+}
+
+variable "db_password" {
+  description = "Aurora DB password"
+  type        = string
+  sensitive   = true
+}
+
+variable "lambda_handler" {
+  description = "Lambda handler class (fully qualified class::method)"
+  type        = string
 }

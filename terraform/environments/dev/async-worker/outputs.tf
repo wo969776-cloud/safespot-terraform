@@ -1,66 +1,103 @@
-# ── api-service 연동 output (변경 금지) ──────────────────────────
+# ── api-service 연동 output ───────────────────────────────────────
 # cache_refresh 큐를 대표 event queue로 매핑한다.
-# api-service IRSA의 sqs:SendMessage 권한 대상은 cache_refresh 큐 ARN 기준.
-# readmodel / env_cache 큐에도 publish가 필요하면 api-service에서 별도 ARN output을 참조해야 한다.
 
 output "event_queue_name" {
-  description = "Main event queue name (cache_refresh queue)."
+  description = "Representative event queue name (cache_refresh)."
   value       = module.sqs.cache_refresh_queue_name
 }
 
 output "event_queue_arn" {
-  description = "Main event queue ARN (cache_refresh queue)."
+  description = "Representative event queue ARN (cache_refresh)."
   value       = module.sqs.cache_refresh_queue_arn
 }
 
 output "event_queue_url" {
-  description = "Main event queue URL (cache_refresh queue)."
+  description = "Representative event queue URL (cache_refresh)."
   value       = module.sqs.cache_refresh_queue_url
 }
 
 output "event_dlq_name" {
-  description = "Shared dead-letter queue name."
-  value       = module.sqs.dlq_name
+  description = "Representative event DLQ name (cache_refresh DLQ)."
+  value       = module.sqs.cache_refresh_dlq_name
 }
 
 output "event_dlq_arn" {
-  description = "Shared dead-letter queue ARN."
-  value       = module.sqs.dlq_arn
+  description = "Representative event DLQ ARN (cache_refresh DLQ)."
+  value       = module.sqs.cache_refresh_dlq_arn
 }
 
 output "event_dlq_url" {
-  description = "Shared dead-letter queue URL."
-  value       = module.sqs.dlq_url
+  description = "Representative event DLQ URL (cache_refresh DLQ)."
+  value       = module.sqs.cache_refresh_dlq_url
 }
 
-# ── ops monitoring output ─────────────────────────────────────────
+# ── Queue ARN (external-ingestion / api-service publish 권한용) ───
+
+output "cache_refresh_queue_arn" {
+  description = "Cache refresh queue ARN for IAM policy."
+  value       = module.sqs.cache_refresh_queue_arn
+}
+
+output "readmodel_refresh_queue_arn" {
+  description = "Readmodel refresh queue ARN for IAM policy."
+  value       = module.sqs.readmodel_refresh_queue_arn
+}
+
+output "environment_cache_refresh_queue_arn" {
+  description = "Environment cache refresh queue ARN for IAM policy."
+  value       = module.sqs.environment_cache_refresh_queue_arn
+}
+
+# ── ops monitoring output — SQS ───────────────────────────────────
 
 output "sqs_queue_name_cache_refresh" {
-  description = "SQS queue name for cache refresh events."
+  description = "AWS QueueName: safespot-{env}-async-worker-sqs-cache-refresh"
   value       = module.sqs.cache_refresh_queue_name
 }
 
 output "sqs_queue_name_readmodel" {
-  description = "SQS queue name for read model refresh events."
-  value       = module.sqs.readmodel_queue_name
+  description = "AWS QueueName: safespot-{env}-async-worker-sqs-readmodel-refresh"
+  value       = module.sqs.readmodel_refresh_queue_name
 }
 
 output "sqs_queue_name_env_cache" {
-  description = "SQS queue name for environment cache refresh events."
-  value       = module.sqs.env_cache_queue_name
+  description = "AWS QueueName: safespot-{env}-async-worker-sqs-environment-cache-refresh"
+  value       = module.sqs.environment_cache_refresh_queue_name
 }
 
 output "sqs_dlq_name" {
-  description = "SQS dead-letter queue name for async-worker events."
-  value       = module.sqs.dlq_name
+  description = "Primary DLQ name (cache_refresh DLQ)."
+  value       = module.sqs.cache_refresh_dlq_name
 }
 
+output "sqs_dlq_name_cache_refresh" {
+  description = "AWS QueueName: safespot-{env}-async-worker-dlq-cache-refresh"
+  value       = module.sqs.cache_refresh_dlq_name
+}
+
+output "sqs_dlq_name_readmodel_refresh" {
+  description = "AWS QueueName: safespot-{env}-async-worker-dlq-readmodel-refresh"
+  value       = module.sqs.readmodel_refresh_dlq_name
+}
+
+output "sqs_dlq_name_environment_cache_refresh" {
+  description = "AWS QueueName: safespot-{env}-async-worker-dlq-environment-cache-refresh"
+  value       = module.sqs.environment_cache_refresh_dlq_name
+}
+
+# ── ops monitoring output — Lambda (실제 리소스 기반) ─────────────
+
 output "lambda_function_name" {
-  description = "Async-worker Lambda function name for ops monitoring. Null until Lambda resource is managed by Terraform."
-  value       = var.lambda_function_name
+  description = "Async-worker Lambda function name for ops CloudWatch FunctionName dimension."
+  value       = module.lambda.lambda_function_name
+}
+
+output "lambda_function_arn" {
+  description = "Async-worker Lambda function ARN."
+  value       = module.lambda.lambda_function_arn
 }
 
 output "lambda_reserved_concurrent_executions" {
-  description = "Async-worker Lambda reserved concurrency for ops monitoring. Null until Lambda resource is managed by Terraform."
-  value       = var.lambda_reserved_concurrent_executions
+  description = "Async-worker Lambda reserved concurrency for ops alert threshold."
+  value       = module.lambda.lambda_reserved_concurrent_executions
 }
