@@ -130,6 +130,27 @@ resource "aws_security_group_rule" "eks_node_from_cluster" {
   source_security_group_id = aws_security_group.eks_cluster.id
 }
 
+# EKS Node → Cluster API (443)
+resource "aws_security_group_rule" "eks_node_to_cluster_https" {
+  type                     = "egress"
+  description              = "EKS node to cluster API"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.eks_node.id
+  source_security_group_id = aws_security_group.eks_cluster.id
+}
+
+resource "aws_security_group_rule" "eks_cluster_ingress_from_node_https" {
+  type                     = "ingress"
+  description              = "EKS node to cluster API"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.eks_cluster.id
+  source_security_group_id = aws_security_group.eks_node.id
+}
+
 resource "aws_security_group_rule" "eks_node_to_rds" {
   type                     = "egress"
   description              = "EKS node to RDS"
