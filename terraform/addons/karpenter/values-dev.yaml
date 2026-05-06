@@ -5,7 +5,8 @@
 serviceAccount:
   create: true
   name: karpenter
-  annotations: {}
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::154335823230:role/safespot-dev-api-service-iam-role-karpenter-controller"
 
 settings:
   clusterName: safespot-dev-eks
