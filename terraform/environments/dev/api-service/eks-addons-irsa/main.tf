@@ -72,20 +72,6 @@ data "aws_caller_identity" "current" {}
 
 data "aws_iam_policy_document" "external_secrets" {
   statement {
-    sid    = "SecretsManagerRead"
-    effect = "Allow"
-
-    actions = [
-      "secretsmanager:GetSecretValue",
-      "secretsmanager:DescribeSecret",
-    ]
-
-    resources = [
-      "arn:aws:secretsmanager:${var.aws_region}:${data.aws_caller_identity.current.account_id}:secret:${var.project}/${var.env}/*",
-    ]
-  }
-
-  statement {
     sid    = "SSMParameterStoreRead"
     effect = "Allow"
 
@@ -103,7 +89,7 @@ data "aws_iam_policy_document" "external_secrets" {
 
 resource "aws_iam_policy" "external_secrets" {
   name        = local.external_secrets_policy_name
-  description = "IAM policy for External Secrets Operator to access Secrets Manager and SSM Parameter Store"
+  description = "IAM policy for External Secrets Operator to access SSM Parameter Store"
   policy      = data.aws_iam_policy_document.external_secrets.json
 
   tags = merge(local.common_tags, {

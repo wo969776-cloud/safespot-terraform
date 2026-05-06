@@ -1,17 +1,17 @@
 # External Secrets Contract
 
-This document defines how application secrets are managed using the External Secrets Operator (ESO) and AWS Secrets Manager in the SafeSpot dev environment.
+This document defines how application secrets are managed using the External Secrets Operator (ESO) and AWS SSM Parameter Store in the SafeSpot dev environment.
 
 ---
 
 ## Architecture
 
 ```
-AWS Secrets Manager
+AWS SSM Parameter Store
       │
       │  (IRSA: safespot-dev-external-secrets-irsa)
       ▼
-ClusterSecretStore: aws-secrets-manager
+ClusterSecretStore: ssm-parameter-store
       │
       │  (referenced by ExternalSecret resources)
       ▼
@@ -42,7 +42,7 @@ The `safespot-terraform` (this) repo owns:
 
 Each application service repository owns its own `ExternalSecret` resources. The platform team does **not** create ExternalSecret manifests.
 
-**ClusterSecretStore reference name**: `aws-secrets-manager`
+**ClusterSecretStore reference name**: `ssm-parameter-store`
 
 **Example ExternalSecret:**
 ```yaml
@@ -54,7 +54,7 @@ metadata:
 spec:
   refreshInterval: 1h
   secretStoreRef:
-    name: aws-secrets-manager
+    name: ssm-parameter-store
     kind: ClusterSecretStore
   target:
     name: api-core-secrets
@@ -72,7 +72,7 @@ spec:
 
 ## Secret Naming Convention
 
-All secrets in AWS Secrets Manager follow this path convention:
+All secrets in AWS SSM Parameter Store follow this path convention:
 
 ```
 /safespot/{environment}/{app}/{key}
@@ -92,17 +92,17 @@ Common secrets shared across services use the path prefix `/safespot/dev/common/
 
 ## ClusterSecretStore
 
-The `ClusterSecretStore` named `aws-secrets-manager` is cluster-scoped and can be referenced from any namespace.
+The `ClusterSecretStore` named `ssm-parameter-store` is cluster-scoped and can be referenced from any namespace.
 
 ```yaml
 apiVersion: external-secrets.io/v1beta1
 kind: ClusterSecretStore
 metadata:
-  name: aws-secrets-manager
+  name: ssm-parameter-store
 spec:
   provider:
     aws:
-      service: SecretsManager
+      service: ParameterStore
       region: ap-northeast-2
       auth:
         jwt:
@@ -120,7 +120,6 @@ ESO uses the `external-secrets` service account in the `external-secrets` namesp
 ESO uses the IRSA role `safespot-dev-external-secrets-irsa` to read secrets from AWS.
 
 **Permissions granted:**
-- `secretsmanager:GetSecretValue`, `secretsmanager:DescribeSecret` on all Secrets Manager resources
 - `ssm:GetParameter`, `ssm:GetParameters`, `ssm:GetParametersByPath` on all SSM Parameter Store resources
 
 See `docs/irsa-contract.md` for the full IRSA binding details.
@@ -144,8 +143,8 @@ kubectl get externalsecret -A
 kubectl describe externalsecret api-core-secrets -n api-core
 
 # Verify ClusterSecretStore is ready
-kubectl get clustersecretstore aws-secrets-manager
+kubectl get clustersecretstore ssm-parameter-store
 
 # Test secret access from AWS CLI
-aws secretsmanager get-secret-value --secret-id /safespot/dev/api-core/db-password
+aws ssm get-parameter --name /safespot/dev/api-core/db-password --with-decryption
 ```

@@ -3,13 +3,13 @@
 
 clusterSecretStore:
   # Name referenced by ExternalSecret resources: clusterSecretStoreRef.name
-  name: aws-secrets-manager
+  name: ssm-parameter-store
 
   provider:
     # AWS region for the secret backend
     region: ap-northeast-2
-    # Backend service: SecretsManager | ParameterStore
-    service: SecretsManager
+    # Backend service for AWS SSM Parameter Store
+    service: ParameterStore
 
   # IRSA service account that ESO uses to authenticate with AWS.
   # Must match the SA annotated with the IRSA role ARN in the ESO controller chart.

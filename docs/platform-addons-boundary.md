@@ -72,7 +72,7 @@ Each application service repository (api-core, api-public-read, external-ingesti
 - `Deployment` and `Service` manifests for the application
 - `Ingress` (with ALB annotations and hostname for ExternalDNS)
 - `HorizontalPodAutoscaler` (uses Metrics Server)
-- `ExternalSecret` (references `ClusterSecretStore: aws-secrets-manager`)
+- `ExternalSecret` (references `ClusterSecretStore: ssm-parameter-store`)
 - `PodDisruptionBudget`
 - `nodeSelector` and `tolerations` aligned to Karpenter NodePool contracts (see `docs/karpenter-nodepool-contract.md`)
 

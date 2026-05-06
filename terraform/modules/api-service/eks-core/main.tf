@@ -17,8 +17,7 @@ module "eks" {
   subnet_ids               = var.private_subnet_ids
   control_plane_subnet_ids = local.effective_control_plane_subnet_ids
 
-  create_cluster_security_group = false
-  cluster_security_group_id     = var.cluster_security_group_id
+  create_cluster_security_group = true
 
   create_node_security_group = false
   node_security_group_id     = var.node_security_group_id

@@ -77,11 +77,6 @@ variable "tags" {
   default     = {}
 }
 
-variable "cluster_security_group_id" {
-  description = "Existing security group ID for EKS cluster."
-  type        = string
-}
-
 variable "node_security_group_id" {
   description = "Existing security group ID for EKS managed node group."
   type        = string

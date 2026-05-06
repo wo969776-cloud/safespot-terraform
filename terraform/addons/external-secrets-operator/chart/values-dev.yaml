@@ -1,8 +1,8 @@
 clusterSecretStore:
-  name: aws-secrets-manager
+  name: ssm-parameter-store
   provider:
     region: ap-northeast-2
-    service: SecretsManager
+    service: ParameterStore
   serviceAccountRef:
     name: external-secrets
     namespace: external-secrets

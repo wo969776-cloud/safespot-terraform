@@ -8,8 +8,7 @@ module "eks_core" {
   private_subnet_ids       = local.private_app_subnet_ids
   control_plane_subnet_ids = local.private_app_subnet_ids
 
-  cluster_security_group_id = local.eks_cluster_sg_id
-  node_security_group_id    = local.eks_node_sg_id
+  node_security_group_id = local.eks_node_sg_id
 
   cluster_endpoint_public_access  = var.cluster_endpoint_public_access
   cluster_endpoint_private_access = var.cluster_endpoint_private_access

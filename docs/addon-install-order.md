@@ -22,7 +22,7 @@ VPC / Network
               └── SQS interruption queue
 
 Route53 Hosted Zone (front-edge or standalone)
-Secrets Manager secrets (initial secret creation)
+SSM Parameter Store secrets (initial secret creation)
 SSM Parameters (ssm-parameters)
 ```
 

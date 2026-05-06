@@ -28,9 +28,9 @@ chart/
 
 | Field | Description | Default |
 |---|---|---|
-| `clusterSecretStore.name` | Name referenced by `ExternalSecret.clusterSecretStoreRef.name` | `aws-secrets-manager` |
+| `clusterSecretStore.name` | Name referenced by `ExternalSecret.clusterSecretStoreRef.name` | `ssm-parameter-store` |
 | `clusterSecretStore.provider.region` | AWS region | `ap-northeast-2` |
-| `clusterSecretStore.provider.service` | Backend: `SecretsManager` or `ParameterStore` | `SecretsManager` |
+| `clusterSecretStore.provider.service` | Backend service for AWS SSM Parameter Store | `ParameterStore` |
 | `clusterSecretStore.serviceAccountRef.name` | ESO controller ServiceAccount name | `external-secrets` |
 | `clusterSecretStore.serviceAccountRef.namespace` | ESO controller namespace | `external-secrets` |
 
@@ -45,7 +45,6 @@ bash scripts/init-addon-values.sh
 Source: `terraform -chdir=terraform/environments/dev/api-service/eks-addons-irsa output -raw external_secrets_irsa_role_arn`
 
 The role `safespot-dev-external-secrets-irsa` grants:
-- `secretsmanager:GetSecretValue`, `secretsmanager:DescribeSecret`
 - `ssm:GetParameter`, `ssm:GetParameters`, `ssm:GetParametersByPath`
 
 See `docs/irsa-contract.md` for the full binding table.
@@ -62,6 +61,6 @@ Wave 2: argocd/eso-configs.yaml                → ClusterSecretStore sync
 App deploy repos reference the store with:
 ```yaml
 clusterSecretStoreRef:
-  name: aws-secrets-manager
+  name: ssm-parameter-store
   kind: ClusterSecretStore
 ```

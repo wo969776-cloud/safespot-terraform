@@ -18,6 +18,11 @@ output "cluster_security_group_id" {
   value       = module.eks_core.cluster_security_group_id
 }
 
+output "cluster_primary_security_group_id" {
+  description = "EKS automatically-created cluster primary security group ID."
+  value       = module.eks_core.cluster_primary_security_group_id
+}
+
 output "node_security_group_id" {
   description = "EKS node security group ID."
   value       = module.eks_core.node_security_group_id
