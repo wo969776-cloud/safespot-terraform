@@ -2,6 +2,6 @@ provider "aws" {
   region = var.aws_region
 
   default_tags {
-    tags = local.common_tags
+    tags = merge(local.common_tags, var.common_tags)
   }
 }
