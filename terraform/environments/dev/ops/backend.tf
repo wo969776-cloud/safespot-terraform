@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket  = "safespot-terraform-state"
-    key     = "dev/ops/terraform.tfstate"
+    key     = "environments/dev/ops/terraform.tfstate"
     region  = "ap-northeast-2"
     encrypt = true
   }
