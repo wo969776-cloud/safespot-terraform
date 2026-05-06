@@ -48,7 +48,7 @@ resource "aws_iam_policy" "fluentbit_cloudwatch_write" {
 
 module "fluentbit_irsa" {
   count  = var.enable_fluentbit_irsa ? 1 : 0
-  source = "../../../../modules/api-service/eks-irsa"
+  source = "../../../modules/api-service/eks-irsa"
 
   role_name            = "${local.name_prefix}-fluentbit-irsa"
   oidc_provider_arn    = var.eks_oidc_provider_arn
@@ -56,7 +56,7 @@ module "fluentbit_irsa" {
   namespace            = var.fluentbit_namespace
   service_account_name = var.fluentbit_service_account_name
 
-  managed_policy_arns = [
-    aws_iam_policy.fluentbit_cloudwatch_write[0].arn
-  ]
+  managed_policy_arns = {
+    fluentbit_cloudwatch_write = aws_iam_policy.fluentbit_cloudwatch_write.arn
+  }
 }
