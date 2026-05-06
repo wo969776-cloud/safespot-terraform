@@ -37,6 +37,8 @@ VPC/Subnet ID, Security Group ID, DLQ, Queue ARN, Cluster ARN, WAF, CloudFront d
 
 Secret 값은 Terraform 파일, tfvars, locals, output, state에 저장하지 않는다. 로컬 셸이나 CI secret store에서 값을 주입해 등록한다.
 
+상세 절차는 [SECRET-INJECTION.md](./SECRET-INJECTION.md)를 따른다.
+
 ```bash
 read -r -s RDS_PASSWORD
 
