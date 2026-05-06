@@ -62,7 +62,7 @@ resource "aws_security_group" "eks_node" {
   tags = merge(var.common_tags, {
     Name                                                      = "${var.project}-${var.environment}-network-sg-eks-node"
     "kubernetes.io/cluster/${var.project}-${var.environment}" = "owned"
-    "karpenter.sh/discovery"                                  = "${var.project}-${var.environment}"
+    "karpenter.sh/discovery"                                  = "${var.project}-${var.environment}-eks"
   })
 }
 

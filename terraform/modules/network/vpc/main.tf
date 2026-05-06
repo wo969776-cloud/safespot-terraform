@@ -34,6 +34,7 @@ resource "aws_subnet" "private_app" {
     Name                                                      = "${var.project}-${var.environment}-network-subnet-private-app-${substr(var.availability_zones[count.index], -2, 2)}"
     "kubernetes.io/role/internal-elb"                        = "1"
     "kubernetes.io/cluster/${var.project}-${var.environment}" = "owned"
+    "karpenter.sh/discovery"                                  = "${var.project}-${var.environment}-eks"
   })
 }
 
