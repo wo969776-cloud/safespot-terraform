@@ -1,26 +1,29 @@
 # modules/ssm-parameters
 
-SSM Parameter Store 리소스를 생성하는 재사용 가능 Terraform 모듈입니다.
+비민감 SSM `String` Parameter만 생성하는 재사용 Terraform 모듈이다.
 
----
-
-## 개요
-
-`/{project}/{env}/{key}` 형태로 SSM Parameter name을 일관되게 생성합니다.
+이 모듈은 `SecureString`, KMS key, secret value를 생성하거나 관리하지 않는다. Parameter name은 호출자가 완성된 경로로 전달한다.
 
 ```hcl
-name = "/${var.project}/${var.env}/${each.key}"
+module "ssm_parameters" {
+  source = "../../../modules/ssm-parameters"
+
+  parameters = {
+    app_profile = {
+      name        = "/safespot/dev/app/profile"
+      value       = "dev"
+      description = "SafeSpot runtime profile."
+    }
+  }
+}
 ```
-
----
-
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.6.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.34, < 6.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5.34, < 7.0 |
 
 ## Providers
 
@@ -42,20 +45,12 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_common_tags"></a> [common\_tags](#input\_common\_tags) | n/a | `map(string)` | `{}` | no |
-| <a name="input_env"></a> [env](#input\_env) | n/a | `string` | n/a | yes |
-| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | n/a | `string` | `null` | no |
-| <a name="input_parameters"></a> [parameters](#input\_parameters) | n/a | <pre>map(object({<br/>    value       = string<br/>    type        = string<br/>    description = optional(string)<br/>  }))</pre> | n/a | yes |
-| <a name="input_project"></a> [project](#input\_project) | n/a | `string` | n/a | yes |
-| <a name="input_use_custom_kms_key"></a> [use\_custom\_kms\_key](#input\_use\_custom\_kms\_key) | n/a | `bool` | `false` | no |
+| <a name="input_parameters"></a> [parameters](#input\_parameters) | Non-sensitive SSM String parameters. | <pre>map(object({<br/>    name        = string<br/>    value       = string<br/>    description = optional(string)<br/>  }))</pre> | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_parameter_arns"></a> [parameter\_arns](#output\_parameter\_arns) | n/a |
-| <a name="output_parameter_name_prefix"></a> [parameter\_name\_prefix](#output\_parameter\_name\_prefix) | SSM parameter path prefix. |
-| <a name="output_parameter_names"></a> [parameter\_names](#output\_parameter\_names) | n/a |
-| <a name="output_secure_parameter_names"></a> [secure\_parameter\_names](#output\_secure\_parameter\_names) | n/a |
-| <a name="output_string_parameter_names"></a> [string\_parameter\_names](#output\_string\_parameter\_names) | n/a |
+| <a name="output_parameter_arns"></a> [parameter\_arns](#output\_parameter\_arns) | Created SSM parameter ARNs. |
+| <a name="output_parameter_names"></a> [parameter\_names](#output\_parameter\_names) | Created SSM parameter names. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

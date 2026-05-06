@@ -1,20 +1,11 @@
-aws_region = "ap-northeast-2"
-project    = "safespot"
-env        = "dev"
+aws_region             = "ap-northeast-2"
+project                = "safespot"
+environment            = "dev"
+terraform_state_bucket = "safespot-terraform-state"
 
-remote_state_bucket = "safespot-terraform-state"
-data_state_key      = "environments/dev/data/terraform.tfstate"
-
-ssm_parameters = {
-  "common/aws-region" = {
-    value       = "ap-northeast-2"
-    type        = "String"
-    description = "AWS region"
-  }
-
-  "common/spring-profile" = {
-    value       = "dev"
-    type        = "String"
-    description = "Spring profile"
-  }
+common_tags = {
+  Project     = "SafeSpot"
+  Environment = "dev"
+  ManagedBy   = "Terraform"
+  Area        = "ssm-parameters"
 }

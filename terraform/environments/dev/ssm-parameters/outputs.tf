@@ -1,20 +1,17 @@
 output "parameter_names" {
+  description = "Created non-sensitive SSM String parameter names."
+
   value = module.ssm_parameters.parameter_names
 }
 
 output "parameter_arns" {
+  description = "Created non-sensitive SSM String parameter ARNs."
+
   value = module.ssm_parameters.parameter_arns
 }
 
-output "secure_parameter_names" {
-  value = module.ssm_parameters.secure_parameter_names
-}
+output "secure_parameter_paths" {
+  description = "SecureString parameter path contract. Values are managed outside Terraform."
 
-output "string_parameter_names" {
-  value = module.ssm_parameters.string_parameter_names
-}
-
-output "parameter_name_prefix" {
-  description = "SSM parameter path prefix."
-  value       = module.ssm_parameters.parameter_name_prefix
+  value = local.secure_parameter_paths
 }
