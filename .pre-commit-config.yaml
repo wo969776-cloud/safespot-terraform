@@ -8,8 +8,10 @@ repos:
       - id: terraform_validate
         #stages: [manual]
         files: ^terraform/(environments/dev/ssm-parameters|modules/ssm-parameters)/
+
       - id: terraform_tflint
         files: ^terraform/(environments/dev/ssm-parameters|modules/ssm-parameters)/
+
       - id: terraform_docs
         #stages: [manual]
         files: ^terraform/(environments/dev/ssm-parameters|modules/ssm-parameters)/

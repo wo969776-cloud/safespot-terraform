@@ -32,7 +32,7 @@ resource "aws_subnet" "private_app" {
 
   tags = merge(var.common_tags, {
     Name                                                      = "${var.project}-${var.environment}-network-subnet-private-app-${substr(var.availability_zones[count.index], -2, 2)}"
-    "kubernetes.io/role/internal-elb"                        = "1"
+    "kubernetes.io/role/internal-elb"                         = "1"
     "kubernetes.io/cluster/${var.project}-${var.environment}" = "owned"
   })
 }

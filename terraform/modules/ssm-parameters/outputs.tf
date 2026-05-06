@@ -1,30 +1,15 @@
 output "parameter_names" {
+  description = "Created SSM parameter names."
+
   value = {
     for k, v in aws_ssm_parameter.this : k => v.name
   }
 }
 
 output "parameter_arns" {
+  description = "Created SSM parameter ARNs."
+
   value = {
     for k, v in aws_ssm_parameter.this : k => v.arn
   }
-}
-
-output "secure_parameter_names" {
-  value = {
-    for k, v in aws_ssm_parameter.this : k => v.name
-    if var.parameters[k].type == "SecureString"
-  }
-}
-
-output "string_parameter_names" {
-  value = {
-    for k, v in aws_ssm_parameter.this : k => v.name
-    if var.parameters[k].type == "String"
-  }
-}
-
-output "parameter_name_prefix" {
-  description = "SSM parameter path prefix."
-  value       = "/${var.project}/${var.env}"
 }
