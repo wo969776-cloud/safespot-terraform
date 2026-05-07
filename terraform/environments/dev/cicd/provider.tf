@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.50"
+      version = "~> 5.0"
     }
   }
 }
@@ -13,11 +13,6 @@ provider "aws" {
   region = var.aws_region
 
   default_tags {
-    tags = {
-      Project     = "safespot"
-      Environment = var.env
-      ManagedBy   = "terraform"
-      Part        = "cicd"
-    }
+    tags = var.common_tags
   }
 }
