@@ -1,5 +1,7 @@
 resource "aws_iam_role" "github_actions" {
-  for_each = toset(var.github_repos)
+  for_each = toset([
+    for repo in var.github_repos : "${var.github_org}/${repo}"
+  ])
 
   name        = "${local.name_prefix}-iam-role-gha-${replace(each.key, "/", "-")}"
   description = "GitHub Actions OIDC Role for ${each.key}"
@@ -23,24 +25,24 @@ resource "aws_iam_role" "github_actions" {
           }
 
           StringLike = {
-            "${local.github_oidc_host}:sub" = [
-              "repo:${each.key}:ref:refs/heads/main",
-              "repo:${each.key}:pull_request"
-            ]
+            "${local.github_oidc_host}:sub" = concat(
+              [
+                for branch in var.allowed_branches :
+                "repo:${each.key}:ref:refs/heads/${branch}"
+              ],
+              var.allow_pull_request_oidc ? [
+                "repo:${each.key}:pull_request"
+              ] : []
+            )
           }
         }
       }
     ]
   })
 
-  tags = {
-    Name        = "${local.name_prefix}-iam-role-gha-${replace(each.key, "/", "-")}"
-    Project     = var.project
-    Environment = var.environment
-    Domain      = local.domain
-    ManagedBy   = "terraform"
-    Service     = "github-actions"
-    CostCenter  = "${var.project}-${var.environment}"
-    Repository  = each.key
-  }
+  tags = merge(var.common_tags, {
+    Name       = "${local.name_prefix}-iam-role-gha-${replace(each.key, "/", "-")}"
+    Service    = "github-actions"
+    Repository = each.key
+  })
 }

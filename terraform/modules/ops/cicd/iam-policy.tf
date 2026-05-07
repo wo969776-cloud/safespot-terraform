@@ -25,22 +25,15 @@ resource "aws_iam_policy" "ecr_push" {
           "ecr:BatchGetImage",
           "ecr:GetDownloadUrlForLayer"
         ]
-        Resource = length(var.ecr_repository_arns) > 0 ? var.ecr_repository_arns : [
-          "arn:aws:ecr:${data.aws_region.current.name}:${local.account_id}:repository/${var.project}-${var.environment}-${local.domain}-ecr-*"
-        ]
+        Resource = var.ecr_repository_arns
       }
     ]
   })
 
-  tags = {
-    Name        = "${local.name_prefix}-iam-policy-ecr-push"
-    Project     = var.project
-    Environment = var.environment
-    Domain      = local.domain
-    ManagedBy   = "terraform"
-    Service     = "github-actions"
-    CostCenter  = "${var.project}-${var.environment}"
-  }
+  tags = merge(var.common_tags, {
+    Name    = "${local.name_prefix}-iam-policy-ecr-push"
+    Service = "github-actions"
+  })
 }
 
 resource "aws_iam_policy" "terraform_state" {
@@ -68,19 +61,16 @@ resource "aws_iam_policy" "terraform_state" {
     ]
   })
 
-  tags = {
-    Name        = "${local.name_prefix}-iam-policy-terraform-state"
-    Project     = var.project
-    Environment = var.environment
-    Domain      = local.domain
-    ManagedBy   = "terraform"
-    Service     = "terraform-state"
-    CostCenter  = "${var.project}-${var.environment}"
-  }
+
+  tags = merge(var.common_tags, {
+    Name    = "${local.name_prefix}-iam-policy-terraform-state"
+    Service = "terraform-state"
+  })
 }
 
 resource "aws_iam_policy" "terraform_infra" {
-  name = "${local.name_prefix}-iam-policy-terraform-infra"
+  count = var.enable_terraform_apply ? 1 : 0
+  name  = "${local.name_prefix}-iam-policy-terraform-infra"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -195,15 +185,18 @@ resource "aws_iam_policy" "terraform_infra" {
     ]
   })
 
-  tags = {
-    Name        = "${local.name_prefix}-iam-policy-terraform-infra"
-    Project     = var.project
-    Environment = var.environment
-    Domain      = local.domain
-    ManagedBy   = "terraform"
-    Service     = "terraform"
-    CostCenter  = "${var.project}-${var.environment}"
-  }
+
+  tags = merge(var.common_tags, {
+    Name    = "${local.name_prefix}-iam-policy-terraform-infra"
+    Service = "terraform"
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "argocd_eks" {
+  for_each = var.enable_argocd_eks_policy ? aws_iam_role.github_actions : {}
+
+  role       = each.value.name
+  policy_arn = aws_iam_policy.argocd_eks[0].arn
 }
 
 resource "aws_iam_role_policy_attachment" "ecr_push" {
@@ -221,8 +214,82 @@ resource "aws_iam_role_policy_attachment" "terraform_state" {
 }
 
 resource "aws_iam_role_policy_attachment" "terraform_infra" {
+  for_each = var.enable_terraform_apply ? aws_iam_role.github_actions : {}
+
+  role       = each.value.name
+  policy_arn = aws_iam_policy.terraform_infra[0].arn
+}
+
+resource "aws_iam_policy" "argocd_eks" {
+  count = var.enable_argocd_eks_policy ? 1 : 0
+
+  name = "${local.name_prefix}-iam-policy-argocd-eks"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowDescribeEKS"
+        Effect = "Allow"
+        Action = [
+          "eks:DescribeCluster",
+          "eks:ListClusters"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid      = "AllowAccessKubernetesApi"
+        Effect   = "Allow"
+        Action   = "eks:AccessKubernetesApi"
+        Resource = "arn:aws:eks:${var.aws_region}:${var.account_id}:cluster/${var.eks_cluster_name}"
+      }
+    ]
+  })
+
+  tags = merge(var.common_tags, {
+    Name    = "${local.name_prefix}-iam-policy-argocd-eks"
+    Service = "argocd"
+  })
+}
+
+resource "aws_iam_policy" "frontend_deploy" {
+  name = "${local.name_prefix}-iam-policy-frontend-deploy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowS3FrontendSync"
+        Effect = "Allow"
+        Action = [
+          "s3:PutObject",
+          "s3:GetObject",
+          "s3:DeleteObject",
+          "s3:ListBucket"
+        ]
+        Resource = [
+          "arn:aws:s3:::${var.frontend_s3_bucket}",
+          "arn:aws:s3:::${var.frontend_s3_bucket}/*"
+        ]
+      },
+      {
+        Sid      = "AllowCloudfrontInvalidation"
+        Effect   = "Allow"
+        Action   = "cloudfront:CreateInvalidation"
+        Resource = "arn:aws:cloudfront::${local.account_id}:distribution/${var.cloudfront_distribution_id}"
+      }
+    ]
+  })
+
+  tags = merge(var.common_tags, {
+    Name    = "${local.name_prefix}-iam-policy-frontend-deploy"
+    Service = "frontend"
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "frontend_deploy" {
   for_each = aws_iam_role.github_actions
 
   role       = each.value.name
-  policy_arn = aws_iam_policy.terraform_infra.arn
+  policy_arn = aws_iam_policy.frontend_deploy.arn
 }
