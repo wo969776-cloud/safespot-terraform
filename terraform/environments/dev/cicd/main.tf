@@ -1,8 +1,8 @@
 data "aws_caller_identity" "current" {}
+data "aws_region" "current" {}         # ← 추가
 
 data "terraform_remote_state" "ops" {
   backend = "s3"
-
   config = {
     bucket = local.remote_state_bucket
     key    = "environments/${var.environment}/ops/terraform.tfstate"
@@ -13,7 +13,6 @@ data "terraform_remote_state" "ops" {
 data "terraform_remote_state" "api_service" {
   count   = var.enable_argocd_eks_policy ? 1 : 0
   backend = "s3"
-
   config = {
     bucket = local.remote_state_bucket
     key    = "environments/${var.environment}/api-service/terraform.tfstate"
@@ -44,22 +43,18 @@ module "cicd" {
 
   project     = var.project
   environment = var.environment
+  github_org  = var.github_org
+  github_repos = var.github_repos
 
-  github_org              = var.github_org
-  github_repos            = var.github_repos
-  allowed_branches        = var.allowed_branches
-  allow_pull_request_oidc = var.allow_pull_request_oidc
+  terraform_state_bucket       = var.terraform_state_bucket   # _name 제거
+  terraform_state_key_prefixes = var.terraform_state_key_prefixes
 
-  terraform_state_bucket       = var.terraform_state_bucket
-  terraform_state_key_prefixes = local.terraform_state_key_prefixes
+  account_id       = data.aws_caller_identity.current.account_id
+  aws_region       = data.aws_region.current.name
+  common_tags      = var.common_tags
+  allowed_branches = var.allowed_branches
 
-  ecr_repository_arns = local.ecr_repository_arns
-
-  enable_terraform_apply   = var.enable_terraform_apply
-  enable_argocd_eks_policy = var.enable_argocd_eks_policy
-  eks_cluster_name         = local.eks_cluster_name
-
-  aws_region  = var.aws_region
-  account_id  = data.aws_caller_identity.current.account_id
-  common_tags = var.common_tags
+  ecr_repository_arns      = local.ecr_repository_arns
+  enable_argocd_eks_policy  = var.enable_argocd_eks_policy
+  eks_cluster_name          = local.eks_cluster_name
 }
