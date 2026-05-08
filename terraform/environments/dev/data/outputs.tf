@@ -32,3 +32,13 @@ output "redis_port" {
   description = "Redis port"
   value       = module.redis.redis_port
 }
+
+output "aurora_cluster_identifier" {
+  description = "Aurora cluster identifier"
+  value       = module.rds.cluster_identifier
+}
+
+output "redis_replication_group_id" {
+  description = "Redis replication group ID"
+  value       = module.redis.redis_cluster_id
+}
