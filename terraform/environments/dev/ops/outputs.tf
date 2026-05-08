@@ -10,6 +10,10 @@ output "ops_sns_topic_arn" {
   value = module.alerting.sns_topic_arn
 }
 
+output "ops_edge_sns_topic_arn" {
+  value = module.alerting.edge_sns_topic_arn
+}
+
 output "slack_webhook_secret_arn" {
   value = module.alerting.slack_webhook_secret_arn
 }
@@ -44,6 +48,40 @@ output "irsa_role_arns" {
 
 output "cloudwatch_read_policy_arn" {
   value = var.enable_observability_iam ? module.observability_iam[0].cloudwatch_read_policy_arn : null
+}
+
+output "grafana_cloudwatch_read_policy_arn" {
+  value = var.enable_observability_iam ? module.observability_iam[0].grafana_cloudwatch_read_policy_arn : null
+}
+
+output "grafana_irsa_role_arn" {
+  description = "IAM role ARN for Grafana CloudWatch datasource IRSA."
+  value       = var.enable_observability_iam ? module.observability_iam[0].grafana_irsa_role_arn : null
+}
+
+output "grafana_irsa_role_name" {
+  value = var.enable_observability_iam ? module.observability_iam[0].grafana_irsa_role_name : null
+}
+
+output "grafana_irsa_subject" {
+  value = var.enable_observability_iam ? module.observability_iam[0].grafana_irsa_subject : null
+}
+
+output "yace_cloudwatch_read_policy_arn" {
+  value = var.enable_observability_iam ? module.observability_iam[0].yace_cloudwatch_read_policy_arn : null
+}
+
+output "yace_irsa_role_arn" {
+  description = "IAM role ARN for YACE IRSA."
+  value       = var.enable_observability_iam ? module.observability_iam[0].yace_irsa_role_arn : null
+}
+
+output "yace_irsa_role_name" {
+  value = var.enable_observability_iam ? module.observability_iam[0].yace_irsa_role_name : null
+}
+
+output "yace_irsa_subject" {
+  value = var.enable_observability_iam ? module.observability_iam[0].yace_irsa_subject : null
 }
 
 output "log_bucket_id" {

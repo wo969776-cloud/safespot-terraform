@@ -5,6 +5,8 @@ locals {
   alarm_actions       = [var.sns_topic_arn]
   critical_ok_actions = [var.sns_topic_arn]
   ok_actions          = [var.sns_topic_arn]
+  edge_alarm_actions  = [var.edge_sns_topic_arn]
+  edge_ok_actions     = [var.edge_sns_topic_arn]
 
   default_evaluation_periods = 3
   default_period             = 60

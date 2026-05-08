@@ -12,6 +12,11 @@ variable "sns_topic_arn" {
   type = string
 }
 
+variable "edge_sns_topic_arn" {
+  description = "CloudFront/WAF global metric alarm action SNS Topic ARN. us-east-1 topic이어야 합니다."
+  type        = string
+}
+
 variable "alb_arn_suffix" {
   description = "ALB ARN suffix. 형식: app/{alb-name}/{id}."
   type        = string

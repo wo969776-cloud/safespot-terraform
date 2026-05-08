@@ -8,16 +8,6 @@
 
 data "aws_caller_identity" "current" {}
 
-data "terraform_remote_state" "network" {
-  backend = "s3"
-
-  config = {
-    bucket = var.remote_state_bucket
-    key    = "environments/${var.environment}/network/terraform.tfstate"
-    region = var.remote_state_region
-  }
-}
-
 data "terraform_remote_state" "api_service" {
   backend = "s3"
 
@@ -136,6 +126,11 @@ module "ecr" {
 module "alerting" {
   source = "../../../modules/ops/alerting"
 
+  providers = {
+    aws           = aws
+    aws.us_east_1 = aws.us_east_1
+  }
+
   project                            = var.project
   environment                        = var.environment
   alert_email                        = var.alert_email
@@ -154,9 +149,10 @@ module "cloudwatch" {
     aws.us_east_1 = aws.us_east_1
   }
 
-  project       = var.project
-  environment   = var.environment
-  sns_topic_arn = module.alerting.sns_topic_arn
+  project            = var.project
+  environment        = var.environment
+  sns_topic_arn      = module.alerting.sns_topic_arn
+  edge_sns_topic_arn = module.alerting.edge_sns_topic_arn
 
   alb_arn_suffix        = var.alb_arn_suffix
   alb_5xx_elb_threshold = var.alb_5xx_elb_threshold
@@ -239,8 +235,11 @@ module "observability_iam" {
   grafana_service_account_name    = var.grafana_service_account_name
   fluentbit_namespace             = var.fluentbit_namespace
   fluentbit_service_account_name  = var.fluentbit_service_account_name
+  yace_namespace                  = var.yace_namespace
+  yace_service_account_name       = var.yace_service_account_name
   enable_grafana_irsa             = var.enable_grafana_irsa
   enable_prometheus_irsa          = var.enable_prometheus_irsa
   enable_fluentbit_irsa           = var.enable_fluentbit_irsa
+  enable_yace_irsa                = var.enable_yace_irsa
   log_group_arns                  = module.log_groups.all_log_group_arns
 }

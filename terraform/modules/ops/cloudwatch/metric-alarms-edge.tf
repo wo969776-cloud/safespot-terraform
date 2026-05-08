@@ -22,8 +22,8 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_5xx" {
     Region         = "Global"
   }
 
-  alarm_actions = local.alarm_actions
-  ok_actions    = local.ok_actions
+  alarm_actions = local.edge_alarm_actions
+  ok_actions    = local.edge_ok_actions
 }
 
 resource "aws_cloudwatch_metric_alarm" "cloudfront_4xx" {
@@ -45,8 +45,8 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_4xx" {
     Region         = "Global"
   }
 
-  alarm_actions = local.alarm_actions
-  ok_actions    = local.ok_actions
+  alarm_actions = local.edge_alarm_actions
+  ok_actions    = local.edge_ok_actions
 }
 
 # CloudFront CacheHitRate / OriginLatency 는 CloudFront 추가 메트릭(Additional Metrics)
@@ -72,8 +72,8 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_cache_hit_rate" {
     Region         = "Global"
   }
 
-  alarm_actions = local.alarm_actions
-  ok_actions    = local.ok_actions
+  alarm_actions = local.edge_alarm_actions
+  ok_actions    = local.edge_ok_actions
 }
 
 resource "aws_cloudwatch_metric_alarm" "cloudfront_origin_latency" {
@@ -95,8 +95,8 @@ resource "aws_cloudwatch_metric_alarm" "cloudfront_origin_latency" {
     Region         = "Global"
   }
 
-  alarm_actions = local.alarm_actions
-  ok_actions    = local.ok_actions
+  alarm_actions = local.edge_alarm_actions
+  ok_actions    = local.edge_ok_actions
 }
 
 resource "aws_cloudwatch_metric_alarm" "waf_blocked_requests" {
@@ -123,6 +123,6 @@ resource "aws_cloudwatch_metric_alarm" "waf_blocked_requests" {
     Region = "CloudFront"
   }
 
-  alarm_actions = local.alarm_actions
-  ok_actions    = local.ok_actions
+  alarm_actions = local.edge_alarm_actions
+  ok_actions    = local.edge_ok_actions
 }

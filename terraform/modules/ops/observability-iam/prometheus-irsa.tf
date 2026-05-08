@@ -9,6 +9,6 @@ module "prometheus_irsa" {
   service_account_name = var.prometheus_service_account_name
 
   managed_policy_arns = {
-    cloudwatch_read = aws_iam_policy.cloudwatch_read.arn
+    cloudwatch_read = aws_iam_policy.cloudwatch_read[0].arn
   }
 }

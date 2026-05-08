@@ -8,7 +8,7 @@ resource "aws_iam_openid_connect_provider" "github" {
   ]
 
   thumbprint_list = [
-  "7560d6f40fa55195f740ee2b1b7c0b4836cbe103"
+    "7560d6f40fa55195f740ee2b1b7c0b4836cbe103"
   ]
 
   tags = merge(var.common_tags, {

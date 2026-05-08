@@ -3,7 +3,7 @@ resource "aws_iam_role" "github_actions" {
     for repo in var.github_repos : "${var.github_org}/${repo}"
   ])
 
-  name        = "${local.name_prefix}-iam-role-gha-${replace(each.key, "/", "-")}"
+  name        = local.github_repo_role_names[each.key]
   description = "GitHub Actions OIDC Role for ${each.key}"
 
   assume_role_policy = jsonencode({
@@ -41,7 +41,7 @@ resource "aws_iam_role" "github_actions" {
   })
 
   tags = merge(var.common_tags, {
-    Name       = "${local.name_prefix}-iam-role-gha-${replace(each.key, "/", "-")}"
+    Name       = local.github_repo_role_names[each.key]
     Service    = "github-actions"
     Repository = each.key
   })

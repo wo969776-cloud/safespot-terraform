@@ -280,6 +280,11 @@ variable "enable_fluentbit_irsa" {
   default = false
 }
 
+variable "enable_yace_irsa" {
+  type    = bool
+  default = false
+}
+
 variable "prometheus_k8s_namespace" {
   type    = string
   default = "monitoring"
@@ -297,7 +302,7 @@ variable "grafana_namespace" {
 
 variable "grafana_service_account_name" {
   type    = string
-  default = "grafana"
+  default = "safespot-grafana"
 }
 
 variable "fluentbit_namespace" {
@@ -308,6 +313,16 @@ variable "fluentbit_namespace" {
 variable "fluentbit_service_account_name" {
   type    = string
   default = "fluent-bit"
+}
+
+variable "yace_namespace" {
+  type    = string
+  default = "monitoring"
+}
+
+variable "yace_service_account_name" {
+  type    = string
+  default = "safespot-yace"
 }
 
 # ── log-bucket ────────────────────────────────────────────────

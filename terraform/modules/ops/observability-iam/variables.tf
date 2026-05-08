@@ -77,7 +77,7 @@ variable "grafana_service_account_name" {
           grafana.serviceAccount.name 값과 반드시 일치시킬 것.
   EOT
   type        = string
-  default     = "grafana"
+  default     = "safespot-grafana"
 }
 
 variable "fluentbit_namespace" {
@@ -98,6 +98,18 @@ variable "fluentbit_service_account_name" {
   EOT
   type        = string
   default     = "fluent-bit"
+}
+
+variable "yace_namespace" {
+  description = "YACE가 배포될 Kubernetes namespace."
+  type        = string
+  default     = "monitoring"
+}
+
+variable "yace_service_account_name" {
+  description = "YACE ServiceAccount 이름."
+  type        = string
+  default     = "safespot-yace"
 }
 
 # ── CloudWatch Log Group ARN ──────────────────────────────────────────────────
@@ -145,6 +157,12 @@ variable "enable_fluentbit_irsa" {
     Fluent Bit을 배포할 예정이면 true.
     TODO: logging chart 설계 확정 후 true로 변경할 것.
   EOT
+  type        = bool
+  default     = false
+}
+
+variable "enable_yace_irsa" {
+  description = "YACE CloudWatch metric read용 IRSA Role 생성 여부."
   type        = bool
   default     = false
 }

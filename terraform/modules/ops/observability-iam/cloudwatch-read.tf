@@ -3,17 +3,17 @@
 # monitoring.md 섹션 1:
 #   Dashboard / alert → Grafana + AlertManager, CloudWatch Alarm 병행
 #
-# Grafana가 CloudWatch를 datasource로 사용할 때 필요한
+# Prometheus CloudWatch exporter가 사용할 수 있는
 # 읽기 전용 IAM Policy를 정의한다.
 #
 # 이 Policy는:
-#   - grafana-irsa.tf 의 Grafana IRSA Role에 attach
-#   - prometheus-irsa.tf 의 Prometheus CloudWatch exporter IRSA Role에 attach
-# 두 곳에서 공통으로 참조한다.
+# Grafana CloudWatch datasource는 별도 최소 권한 policy를 사용한다.
 
 resource "aws_iam_policy" "cloudwatch_read" {
+  count = var.enable_prometheus_irsa ? 1 : 0
+
   name        = "${local.name_prefix}-cloudwatch-read"
-  description = "Grafana/Prometheus CloudWatch datasource 읽기 전용 권한"
+  description = "Prometheus CloudWatch exporter 읽기 전용 권한"
 
   policy = jsonencode({
     Version = "2012-10-17"
