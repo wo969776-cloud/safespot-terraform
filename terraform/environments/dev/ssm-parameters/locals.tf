@@ -166,6 +166,18 @@ locals {
       value       = data.terraform_remote_state.api_service_eks_irsa.outputs.external_ingestion_irsa_role_arn
       description = "IRSA role ARN for external-ingestion ServiceAccount."
     }
+
+    yace_irsa_role_arn = {
+      name        = "/safespot/${var.environment}/observability/yace/irsa-role-arn"
+      value       = data.terraform_remote_state.ops.outputs.yace_irsa_role_arn
+      description = "YACE IRSA role ARN from ops remote state"
+    }
+
+    grafana_irsa_role_arn = {
+      name        = "/safespot/${var.environment}/observability/grafana/irsa-role-arn"
+      value       = data.terraform_remote_state.ops.outputs.grafana_irsa_role_arn
+      description = "Grafana CloudWatch datasource IRSA role ARN from ops remote state"
+    }
   }
 
   secure_parameter_paths = {
