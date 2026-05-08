@@ -16,6 +16,16 @@ data "terraform_remote_state" "data" {
   }
 }
 
+data "aws_ssm_parameter" "db_username" {
+  name            = "/safespot/dev/secret/rds/username"
+  with_decryption = true
+}
+
+data "aws_ssm_parameter" "db_password" {
+  name            = "/safespot/dev/secret/rds/password"
+  with_decryption = true
+}
+
 module "sqs" {
   source = "../../../modules/async-worker/sqs"
 
@@ -50,8 +60,8 @@ module "lambda" {
   db_host     = data.terraform_remote_state.data.outputs.aurora_cluster_endpoint
   db_port     = data.terraform_remote_state.data.outputs.aurora_port
   db_name     = data.terraform_remote_state.data.outputs.aurora_db_name
-  db_user     = var.db_user
-  db_password = var.db_password
+  db_user     = data.aws_ssm_parameter.db_username.value
+  db_password = data.aws_ssm_parameter.db_password.value
   redis_host        = data.terraform_remote_state.data.outputs.redis_primary_endpoint
   metrics_namespace = var.metrics_namespace
 

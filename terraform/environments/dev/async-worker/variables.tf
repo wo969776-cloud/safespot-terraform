@@ -44,20 +44,6 @@ variable "lambda_filename" {
   type        = string
 }
 
-# DB 인증 정보는 절대 tfvars에 작성하지 않는다
-# terraform apply -var="db_user=xxx" -var="db_password=yyy"
-variable "db_user" {
-  description = "Aurora DB username"
-  type        = string
-  sensitive   = true
-}
-
-variable "db_password" {
-  description = "Aurora DB password"
-  type        = string
-  sensitive   = true
-}
-
 variable "lambda_handler" {
   description = "Lambda handler class (fully qualified class::method)"
   type        = string
