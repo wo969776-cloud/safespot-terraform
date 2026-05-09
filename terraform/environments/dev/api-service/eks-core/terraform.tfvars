@@ -20,8 +20,8 @@ managed_node_groups = {
     instance_types = ["t3.medium"]
     iam_role_name  = "safespot-dev-mng-role-system"
     min_size       = 1
-    desired_size   = 1
-    max_size       = 2
+    desired_size   = 2
+    max_size       = 3
     taints = [
       {
         key    = "safespot.io/dedicated"
