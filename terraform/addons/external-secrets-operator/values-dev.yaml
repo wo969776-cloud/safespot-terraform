@@ -22,6 +22,10 @@ nodeSelector:
 tolerations:
   - key: CriticalAddonsOnly
     operator: Exists
+  - key: safespot.io/dedicated
+    operator: Equal
+    value: system
+    effect: NoSchedule
 
 webhook:
   nodeSelector:
@@ -29,6 +33,10 @@ webhook:
   tolerations:
     - key: CriticalAddonsOnly
       operator: Exists
+    - key: safespot.io/dedicated
+      operator: Equal
+      value: system
+      effect: NoSchedule
 
 certController:
   nodeSelector:
@@ -36,3 +44,7 @@ certController:
   tolerations:
     - key: CriticalAddonsOnly
       operator: Exists
+    - key: safespot.io/dedicated
+      operator: Equal
+      value: system
+      effect: NoSchedule

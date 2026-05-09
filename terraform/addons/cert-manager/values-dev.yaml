@@ -18,6 +18,10 @@ nodeSelector:
 tolerations:
   - key: CriticalAddonsOnly
     operator: Exists
+  - key: safespot.io/dedicated
+    operator: Equal
+    value: system
+    effect: NoSchedule
 
 webhook:
   replicaCount: 2
@@ -26,6 +30,10 @@ webhook:
   tolerations:
     - key: CriticalAddonsOnly
       operator: Exists
+    - key: safespot.io/dedicated
+      operator: Equal
+      value: system
+      effect: NoSchedule
 
 cainjector:
   replicaCount: 2
@@ -34,3 +42,7 @@ cainjector:
   tolerations:
     - key: CriticalAddonsOnly
       operator: Exists
+    - key: safespot.io/dedicated
+      operator: Equal
+      value: system
+      effect: NoSchedule

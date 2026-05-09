@@ -28,6 +28,10 @@ nodeSelector:
 tolerations:
   - key: CriticalAddonsOnly
     operator: Exists
+  - key: safespot.io/dedicated
+    operator: Equal
+    value: system
+    effect: NoSchedule
 
 podDisruptionBudget:
   maxUnavailable: 1
