@@ -1,13 +1,9 @@
 output "waf_acl_arn" {
   value       = aws_wafv2_web_acl.main.arn
-  description = "CloudFront 연결용 WAF ACL ARN"
+  description = "CloudFront 연결용 WAF ACL ARN" # 
 }
 
 output "waf_acl_id" {
   value       = aws_wafv2_web_acl.main.id
   description = "WAF ACL ID"
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/infra/network

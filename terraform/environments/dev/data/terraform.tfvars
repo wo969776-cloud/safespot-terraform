@@ -3,19 +3,11 @@ project     = "safespot"
 environment = "dev"
 
 # ── Aurora (Active/Standby Multi-AZ) ────────────────────
-<<<<<<< HEAD
 availability_zones = ["ap-northeast-2a", "ap-northeast-2c"]
 rds_engine_version = "15.6"
 rds_instance_class = "db.t3.medium"
 rds_instance_count = 2
 db_name            = "safespot"
-=======
-availability_zones  = ["ap-northeast-2a", "ap-northeast-2c"]
-rds_engine_version  = "15.8"
-rds_instance_class  = "db.t3.medium"
-rds_instance_count  = 2
-db_name             = "safespot"
->>>>>>> origin/infra/data
 # db_username, db_password → 절대 여기 작성 금지!
 # terraform apply -var="db_username=xxx" -var="db_password=yyy"
 

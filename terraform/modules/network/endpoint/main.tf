@@ -92,49 +92,4 @@ resource "aws_vpc_endpoint" "sqs" {
   tags = merge(var.common_tags, {
     Name = "${var.project}-${var.environment}-network-vpc-endpoint-sqs"
   })
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-}
-
-# EC2 Interface Endpoint (SSM Session Manager용)
-resource "aws_vpc_endpoint" "ec2" {
-  vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.ap-northeast-2.ec2"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = var.private_app_subnet_ids
-  security_group_ids  = [var.eks_node_sg_id]
-  private_dns_enabled = true
-  tags = merge(var.common_tags, {
-    Name = "${var.project}-${var.environment}-network-vpc-endpoint-ec2"
-  })
-}
-
-# SSM Messages Interface Endpoint (SSM Session Manager용)
-resource "aws_vpc_endpoint" "ssmmessages" {
-  vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.ap-northeast-2.ssmmessages"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = var.private_app_subnet_ids
-  security_group_ids  = [var.eks_node_sg_id]
-  private_dns_enabled = true
-  tags = merge(var.common_tags, {
-    Name = "${var.project}-${var.environment}-network-vpc-endpoint-ssmmessages"
-  })
-}
-
-# EC2 Messages Interface Endpoint (SSM Session Manager용)
-resource "aws_vpc_endpoint" "ec2messages" {
-  vpc_id              = var.vpc_id
-  service_name        = "com.amazonaws.ap-northeast-2.ec2messages"
-  vpc_endpoint_type   = "Interface"
-  subnet_ids          = var.private_app_subnet_ids
-  security_group_ids  = [var.eks_node_sg_id]
-  private_dns_enabled = true
-  tags = merge(var.common_tags, {
-    Name = "${var.project}-${var.environment}-network-vpc-endpoint-ec2messages"
-  })
->>>>>>> origin/infra/network
-=======
->>>>>>> origin/infra/data
 }

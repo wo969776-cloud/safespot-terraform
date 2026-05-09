@@ -1,8 +1,3 @@
-variable "aws_region" {
-  description = "AWS region"
-  type        = string
-}
-
 variable "project" {
   description = "Project name"
   type        = string
@@ -13,7 +8,8 @@ variable "environment" {
   type        = string
 }
 
-# visibility_timeout은 lambda_timeout보다 커야 한다
+# visibility_timeout은 consumer 처리 시간보다 커야 한다
+# 실제 Lambda timeout 기준으로 조정 필요
 variable "visibility_timeout_seconds" {
   description = "SQS visibility timeout in seconds"
   type        = number
@@ -39,18 +35,20 @@ variable "max_receive_count" {
   default     = 5
 }
 
-variable "lambda_filename" {
-  description = "Path to async-worker Lambda deployment package (zip). Must be supplied at apply time via -var flag."
-  type        = string
+# Lambda ESM이 폴링하므로 long polling(20s)으로 빈 응답을 줄인다
+variable "receive_wait_time_seconds" {
+  description = "SQS long polling wait time in seconds"
+  type        = number
+  default     = 20
 }
 
-variable "lambda_handler" {
-  description = "Lambda handler class (fully qualified class::method)"
-  type        = string
+variable "delay_seconds" {
+  description = "SQS message delivery delay in seconds"
+  type        = number
+  default     = 0
 }
 
-variable "metrics_namespace" {
-  description = "CloudWatch metrics namespace. Empty string disables CloudWatch metrics."
-  type        = string
-  default     = ""
+variable "common_tags" {
+  description = "Common tags"
+  type        = map(string)
 }
