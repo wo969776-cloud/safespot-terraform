@@ -36,28 +36,6 @@ variable "eks_oidc_provider_arn" {
 
 # ── Namespace ─────────────────────────────────────────────────────────────────
 
-variable "prometheus_namespace" {
-  description = <<-EOT
-    Prometheus가 배포된 Kubernetes namespace.
-    IRSA condition의 sub claim에 사용.
-    형식: system:serviceaccount:{namespace}:{service_account_name}
-    TODO: observability Helm chart 배포 시 사용할 namespace와 반드시 일치시킬 것.
-  EOT
-  type        = string
-  default     = "monitoring"
-}
-
-variable "prometheus_service_account_name" {
-  description = <<-EOT
-    Prometheus ServiceAccount 이름.
-    IRSA condition의 sub claim에 사용.
-    TODO: observability Helm chart(kube-prometheus-stack 등)의
-          prometheus.serviceAccount.name 값과 반드시 일치시킬 것.
-          기본값은 kube-prometheus-stack 기준.
-  EOT
-  type        = string
-  default     = "prometheus"
-}
 
 variable "grafana_namespace" {
   description = <<-EOT
@@ -134,17 +112,6 @@ variable "enable_grafana_irsa" {
     Grafana가 Prometheus만 datasource로 사용하면 false.
     Grafana → CloudWatch 직접 연동 시 true로 변경.
     TODO: observability chart 설계 확정 후 결정할 것.
-  EOT
-  type        = bool
-  default     = false
-}
-
-variable "enable_prometheus_irsa" {
-  description = <<-EOT
-    Prometheus CloudWatch exporter용 IRSA Role 생성 여부.
-    CloudWatch exporter를 사용하지 않으면 false.
-    monitoring.md: ALB/EKS metric → CloudWatch / Prometheus 병행 수집 구조
-    TODO: observability chart에서 CloudWatch exporter 사용 여부 확정 후 결정할 것.
   EOT
   type        = bool
   default     = false

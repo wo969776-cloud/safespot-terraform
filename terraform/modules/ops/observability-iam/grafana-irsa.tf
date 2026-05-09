@@ -14,7 +14,18 @@ resource "aws_iam_policy" "grafana_cloudwatch_read" {
           "cloudwatch:GetMetricData",
           "cloudwatch:GetMetricStatistics",
           "cloudwatch:ListMetrics",
-          "cloudwatch:DescribeAlarms"
+          "cloudwatch:DescribeAlarms",
+          "cloudwatch:DescribeAlarmsForMetric"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "EC2MetadataRead"
+        Effect = "Allow"
+        Action = [
+          "ec2:DescribeTags",
+          "ec2:DescribeInstances",
+          "ec2:DescribeRegions"
         ]
         Resource = "*"
       },
@@ -50,7 +61,6 @@ module "grafana_irsa" {
   }
 }
 
-
 resource "aws_ssm_parameter" "grafana_irsa_role_arn" {
   count = var.enable_grafana_irsa ? 1 : 0
 
@@ -62,7 +72,7 @@ resource "aws_ssm_parameter" "grafana_irsa_role_arn" {
   overwrite = true
 
   tags = {
-  Name    = "/${var.project}/${var.environment}/observability/grafana/irsa-role-arn"
-  Purpose = "grafana-irsa-role-arn"
+    Name    = "/${var.project}/${var.environment}/observability/grafana/irsa-role-arn"
+    Purpose = "grafana-irsa-role-arn"
   }
 }

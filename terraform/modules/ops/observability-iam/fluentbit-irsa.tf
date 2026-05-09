@@ -8,20 +8,12 @@ resource "aws_iam_policy" "fluentbit_cloudwatch_write" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid    = "AllowLogGroupCreate"
-        Effect = "Allow"
-        Action = [
-          "logs:CreateLogGroup",
-        ]
-        Resource = local.fluentbit_log_group_arns
-      },
-      {
         Sid    = "AllowLogStreamWrite"
         Effect = "Allow"
         Action = [
           "logs:CreateLogStream",
           "logs:PutLogEvents",
-          "logs:DescribeLogStreams",
+          "logs:DescribeLogStreams"
         ]
         Resource = [
           for arn in local.fluentbit_log_group_arns :
@@ -32,10 +24,10 @@ resource "aws_iam_policy" "fluentbit_cloudwatch_write" {
         Sid    = "AllowLogGroupDescribe"
         Effect = "Allow"
         Action = [
-          "logs:DescribeLogGroups",
+          "logs:DescribeLogGroups"
         ]
         Resource = "*"
-      },
+      }
     ]
   })
 

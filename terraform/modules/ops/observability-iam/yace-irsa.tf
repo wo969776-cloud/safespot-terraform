@@ -13,7 +13,9 @@ resource "aws_iam_policy" "yace_cloudwatch_read" {
         Action = [
           "cloudwatch:GetMetricData",
           "cloudwatch:GetMetricStatistics",
-          "cloudwatch:ListMetrics"
+          "cloudwatch:ListMetrics",
+          "cloudwatch:DescribeAlarms",
+          "cloudwatch:DescribeAlarmsForMetric"
         ]
         Resource = "*"
       },

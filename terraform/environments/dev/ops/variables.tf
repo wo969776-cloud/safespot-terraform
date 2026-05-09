@@ -67,6 +67,12 @@ variable "slack_webhook_recovery_window_days" {
   default = 7
 }
 
+variable "alb_arn_suffix" {
+  description = "ALB ARN suffix. 형식: app/{alb-name}/{id}."
+  type        = string
+  default     = ""
+}
+
 variable "alb_5xx_elb_threshold" {
   description = "ALB 자체(ELB 레벨) 5xx 오류 수 임계값"
   type        = number
@@ -265,11 +271,6 @@ variable "enable_grafana_irsa" {
   default = false
 }
 
-variable "enable_prometheus_irsa" {
-  type    = bool
-  default = false
-}
-
 variable "enable_fluentbit_irsa" {
   type    = bool
   default = false
@@ -278,16 +279,6 @@ variable "enable_fluentbit_irsa" {
 variable "enable_yace_irsa" {
   type    = bool
   default = false
-}
-
-variable "prometheus_k8s_namespace" {
-  type    = string
-  default = "monitoring"
-}
-
-variable "prometheus_service_account_name" {
-  type    = string
-  default = "prometheus"
 }
 
 variable "grafana_namespace" {

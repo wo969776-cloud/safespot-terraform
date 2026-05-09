@@ -46,10 +46,6 @@ output "irsa_role_arns" {
   value = var.enable_observability_iam ? module.observability_iam[0].irsa_role_arns : null
 }
 
-output "cloudwatch_read_policy_arn" {
-  value = var.enable_observability_iam ? module.observability_iam[0].cloudwatch_read_policy_arn : null
-}
-
 output "grafana_cloudwatch_read_policy_arn" {
   value = var.enable_observability_iam ? module.observability_iam[0].grafana_cloudwatch_read_policy_arn : null
 }

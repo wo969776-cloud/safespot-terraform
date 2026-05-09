@@ -229,21 +229,18 @@ module "observability_iam" {
   count  = var.enable_observability_iam ? 1 : 0
   source = "../../../modules/ops/observability-iam"
 
-  project                         = var.project
-  environment                     = var.environment
-  eks_oidc_provider_url           = local.eks_oidc_provider_url
-  eks_oidc_provider_arn           = local.eks_oidc_provider_arn
-  prometheus_namespace            = var.prometheus_k8s_namespace
-  prometheus_service_account_name = var.prometheus_service_account_name
-  grafana_namespace               = var.grafana_namespace
-  grafana_service_account_name    = var.grafana_service_account_name
-  fluentbit_namespace             = var.fluentbit_namespace
-  fluentbit_service_account_name  = var.fluentbit_service_account_name
-  yace_namespace                  = var.yace_namespace
-  yace_service_account_name       = var.yace_service_account_name
-  enable_grafana_irsa             = var.enable_grafana_irsa
-  enable_prometheus_irsa          = var.enable_prometheus_irsa
-  enable_fluentbit_irsa           = var.enable_fluentbit_irsa
-  enable_yace_irsa                = var.enable_yace_irsa
-  log_group_arns                  = module.log_groups.all_log_group_arns
+  project                        = var.project
+  environment                    = var.environment
+  eks_oidc_provider_url          = local.eks_oidc_provider_url
+  eks_oidc_provider_arn          = local.eks_oidc_provider_arn
+  grafana_namespace              = var.grafana_namespace
+  grafana_service_account_name   = var.grafana_service_account_name
+  fluentbit_namespace            = var.fluentbit_namespace
+  fluentbit_service_account_name = var.fluentbit_service_account_name
+  yace_namespace                 = var.yace_namespace
+  yace_service_account_name      = var.yace_service_account_name
+  enable_grafana_irsa            = var.enable_grafana_irsa
+  enable_fluentbit_irsa          = var.enable_fluentbit_irsa
+  enable_yace_irsa               = var.enable_yace_irsa
+  log_group_arns                 = module.log_groups.all_log_group_arns
 }

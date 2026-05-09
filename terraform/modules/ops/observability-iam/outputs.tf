@@ -1,18 +1,3 @@
-output "cloudwatch_read_policy_arn" {
-  description = "Prometheus CloudWatch exporter 읽기 전용 IAM Policy ARN"
-  value       = var.enable_prometheus_irsa ? aws_iam_policy.cloudwatch_read[0].arn : null
-}
-
-output "prometheus_irsa_role_arn" {
-  description = "Prometheus CloudWatch exporter IRSA Role ARN. enable_prometheus_irsa = false 이면 null 반환"
-  value       = var.enable_prometheus_irsa ? module.prometheus_irsa[0].role_arn : null
-}
-
-output "prometheus_irsa_role_name" {
-  description = "Prometheus IRSA Role 이름. enable_prometheus_irsa = false 이면 null 반환"
-  value       = var.enable_prometheus_irsa ? module.prometheus_irsa[0].role_name : null
-}
-
 output "grafana_irsa_role_arn" {
   description = "IAM role ARN for Grafana CloudWatch datasource IRSA."
   value       = var.enable_grafana_irsa ? module.grafana_irsa[0].role_arn : null
@@ -76,7 +61,6 @@ output "yace_irsa_subject" {
 output "irsa_role_arns" {
   description = "생성된 IRSA Role ARN 전체 map. 활성화된 Role만 포함"
   value = {
-    prometheus = var.enable_prometheus_irsa ? module.prometheus_irsa[0].role_arn : null
     grafana    = var.enable_grafana_irsa ? module.grafana_irsa[0].role_arn : null
     fluentbit  = var.enable_fluentbit_irsa ? module.fluentbit_irsa[0].role_arn : null
     yace       = var.enable_yace_irsa ? module.yace_irsa[0].role_arn : null
