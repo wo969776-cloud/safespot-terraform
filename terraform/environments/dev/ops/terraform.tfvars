@@ -13,11 +13,14 @@ services = [
 
 log_retention_days = 30
 
-# TODO: 아래 네 값을 실제 인프라 값으로 교체한 후 apply
-alert_email    = "201sohyun@naver.com"
+# Alert email subscription target for dev ops alarms.
+alert_email = "201sohyun@naver.com"
 
 enable_observability_iam = true
-# 아래 세 플래그는 실제 ServiceAccount annotation 적용(Helm values/ArgoCD app) 확정 후 활성화
+
+# CloudWatch metric collection is handled by YACE.
+# Grafana uses its own IRSA for CloudWatch datasource.
+# Prometheus IRSA remains disabled unless Prometheus itself needs AWS API access.
 enable_fluentbit_irsa  = false
 enable_prometheus_irsa = false
 enable_grafana_irsa    = true
