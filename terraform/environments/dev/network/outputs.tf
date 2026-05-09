@@ -27,10 +27,6 @@ output "alb_sg_id" {
   value = module.sg.alb_sg_id
 }
 
-output "eks_cluster_sg_id" {
-  value = module.sg.eks_cluster_sg_id
-}
-
 output "eks_node_sg_id" {
   value = module.sg.eks_node_sg_id
 }
