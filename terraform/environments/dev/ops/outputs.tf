@@ -67,6 +67,19 @@ output "grafana_irsa_subject" {
   value = var.enable_observability_iam ? module.observability_iam[0].grafana_irsa_subject : null
 }
 
+output "fluentbit_irsa_role_arn" {
+  description = "IAM role ARN for Fluent Bit IRSA."
+  value       = var.enable_observability_iam ? module.observability_iam[0].fluentbit_irsa_role_arn : null
+}
+
+output "fluentbit_irsa_role_name" {
+  value = var.enable_observability_iam ? module.observability_iam[0].fluentbit_irsa_role_name : null
+}
+
+output "fluentbit_irsa_subject" {
+  value = var.enable_observability_iam ? module.observability_iam[0].fluentbit_irsa_subject : null
+}
+
 output "yace_cloudwatch_read_policy_arn" {
   value = var.enable_observability_iam ? module.observability_iam[0].yace_cloudwatch_read_policy_arn : null
 }

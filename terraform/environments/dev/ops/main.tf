@@ -8,6 +8,10 @@
 
 data "aws_caller_identity" "current" {}
 
+data "aws_ssm_parameter" "alb_arn_suffix" {
+  name = "/safespot/${var.environment}/front-edge/alb-arn-suffix"
+}
+
 data "terraform_remote_state" "api_service" {
   backend = "s3"
 
@@ -154,7 +158,7 @@ module "cloudwatch" {
   sns_topic_arn      = module.alerting.sns_topic_arn
   edge_sns_topic_arn = module.alerting.edge_sns_topic_arn
 
-  alb_arn_suffix        = var.alb_arn_suffix
+  alb_arn_suffix        = data.aws_ssm_parameter.alb_arn_suffix.value
   alb_5xx_elb_threshold = var.alb_5xx_elb_threshold
   alb_5xx_threshold     = var.alb_5xx_threshold
   alb_4xx_threshold     = var.alb_4xx_threshold
