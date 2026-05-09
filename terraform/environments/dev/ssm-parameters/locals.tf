@@ -10,25 +10,25 @@ locals {
     CostCenter  = "${var.project}-${var.env}"
   }
 
-ops_ssm_parameters = {
-  "observability/yace/irsa-role-arn" = {
-    value       = data.terraform_remote_state.ops.outputs.yace_irsa_role_arn
-    type        = "String"
-    description = "YACE IRSA Role ARN for CloudWatch metrics read"
-  }
+  ops_ssm_parameters = {
+    "observability/yace/irsa-role-arn" = {
+      value       = data.terraform_remote_state.ops.outputs.yace_irsa_role_arn
+      type        = "String"
+      description = "YACE IRSA Role ARN for CloudWatch metrics read"
+    }
 
-  "observability/grafana/irsa-role-arn" = {
-    value       = data.terraform_remote_state.ops.outputs.grafana_irsa_role_arn
-    type        = "String"
-    description = "Grafana IRSA Role ARN for CloudWatch datasource read"
+    "observability/grafana/irsa-role-arn" = {
+      value       = data.terraform_remote_state.ops.outputs.grafana_irsa_role_arn
+      type        = "String"
+      description = "Grafana IRSA Role ARN for CloudWatch datasource read"
+    }
+    # fluentbit: enable_fluentbit_irsa = true 활성화 후 아래 항목 추가
+    # "observability/fluentbit/irsa-role-arn" = {
+    #   value       = data.terraform_remote_state.ops.outputs.fluentbit_irsa_role_arn
+    #   type        = "String"
+    #   description = "Fluent Bit IRSA Role ARN for CloudWatch Logs write"
+    # }
   }
-  # fluentbit: enable_fluentbit_irsa = true 활성화 후 아래 항목 추가
-  # "observability/fluentbit/irsa-role-arn" = {
-  #   value       = data.terraform_remote_state.ops.outputs.fluentbit_irsa_role_arn
-  #   type        = "String"
-  #   description = "Fluent Bit IRSA Role ARN for CloudWatch Logs write"
-  # }
-}
 
   remote_state_parameters = {
     "data/aurora-cluster-endpoint" = {

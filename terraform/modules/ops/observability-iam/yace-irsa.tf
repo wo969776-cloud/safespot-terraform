@@ -34,6 +34,22 @@ resource "aws_iam_policy" "yace_cloudwatch_read" {
   }
 }
 
+resource "aws_ssm_parameter" "yace_irsa_role_arn" {
+  count = var.enable_yace_irsa ? 1 : 0
+
+  name        = "/${var.project}/${var.environment}/observability/yace/irsa-role-arn"
+  description = "YACE IRSA Role ARN for CloudWatch metrics read"
+  type        = "String"
+  value       = module.yace_irsa[0].role_arn
+
+  overwrite = true
+
+  tags = {
+    Name    = "/${var.project}/${var.environment}/observability/yace/irsa-role-arn"
+    Purpose = "yace-irsa-role-arn"
+  }
+}
+
 module "yace_irsa" {
   count  = var.enable_yace_irsa ? 1 : 0
   source = "../../../modules/api-service/eks-irsa"
