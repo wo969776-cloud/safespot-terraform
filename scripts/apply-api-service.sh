@@ -5,6 +5,13 @@
 #   1. eks-core with create_managed_node_group=false
 #   2. eks-sg-rules
 #   3. eks-core with create_managed_node_group=true
+#   4. eks-irsa
+#   5. eks-karpenter
+#   6. eks-addons-irsa
+#   7. eks-addons
+#   8. init addon values
+#   9. eks-argocd-bootstrap
+#  10. ssm-parameters (only with --include-ssm)
 #
 # It intentionally stops before ArgoCD bootstrap if addon values were modified,
 # because GitOps values must be committed and pushed before ArgoCD syncs them.
@@ -16,11 +23,11 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 AWS_REGION="${AWS_REGION:-ap-northeast-2}"
 CLUSTER_NAME="${CLUSTER_NAME:-safespot-dev-eks}"
-NODEGROUP_PREFIX="${NODEGROUP_PREFIX:-baseline}"
+NODEGROUP_PREFIX="${NODEGROUP_PREFIX:-safespot-dev-mng-}"
 
 AUTO_APPROVE=false
 CLEANUP_FAILED_NODEGROUPS=false
-SKIP_SSM=false
+INCLUDE_SSM=false
 SKIP_KARPENTER=false
 SKIP_INIT_VALUES=false
 SKIP_ARGOCD=false
@@ -34,7 +41,7 @@ Usage:
 Options:
   --auto-approve                  Run terraform apply without interactive approval.
   --cleanup-failed-nodegroups     Delete EKS node groups in CREATE_FAILED before retrying.
-  --skip-ssm                      Skip terraform/environments/dev/ssm-parameters.
+  --include-ssm                   Also apply terraform/environments/dev/ssm-parameters (skipped by default).
   --skip-karpenter                Skip eks-karpenter and Karpenter values injection.
   --skip-init-values              Skip scripts/init-addon-values.sh.
   --skip-argocd                   Skip eks-argocd-bootstrap and ArgoCD waits.
@@ -44,7 +51,7 @@ Options:
 Environment:
   AWS_REGION        Default: ap-northeast-2
   CLUSTER_NAME      Default: safespot-dev-eks
-  NODEGROUP_PREFIX  Default: baseline
+  NODEGROUP_PREFIX  Default: safespot-dev-mng-
 USAGE
 }
 
@@ -52,7 +59,10 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --auto-approve) AUTO_APPROVE=true ;;
     --cleanup-failed-nodegroups) CLEANUP_FAILED_NODEGROUPS=true ;;
-    --skip-ssm) SKIP_SSM=true ;;
+    --skip-ssm)
+      echo "WARN: --skip-ssm is deprecated. SSM is skipped by default. Use --include-ssm to run it." >&2
+      ;;
+    --include-ssm) INCLUDE_SSM=true ;;
     --skip-karpenter) SKIP_KARPENTER=true ;;
     --skip-init-values) SKIP_INIT_VALUES=true ;;
     --skip-argocd) SKIP_ARGOCD=true ;;
@@ -267,7 +277,10 @@ run_init_values() {
 
 ERROR: addon values changed.
 Commit and push these values before ArgoCD bootstrap/sync, then re-run with:
-  bash scripts/apply-api-service.sh --auto-approve --skip-ssm --skip-init-values
+  bash scripts/apply-api-service.sh --auto-approve --skip-init-values
+
+To also apply ssm-parameters in the same run:
+  bash scripts/apply-api-service.sh --auto-approve --skip-init-values --include-ssm
 
 Suggested commands:
   git diff terraform/addons/
@@ -333,10 +346,6 @@ fi
 
 cleanup_failed_nodegroups
 
-if [[ "${SKIP_SSM}" != "true" ]]; then
-  terraform_apply "terraform/environments/dev/ssm-parameters"
-fi
-
 terraform_apply "terraform/environments/dev/api-service/eks-core" -var=create_managed_node_group=false
 wait_for_cluster_active
 
@@ -353,11 +362,18 @@ if [[ "${SKIP_KARPENTER}" != "true" ]]; then
 fi
 
 terraform_apply "terraform/environments/dev/api-service/eks-addons-irsa"
+
+terraform_apply "terraform/environments/dev/api-service/eks-addons"
+
 run_init_values
 
 if [[ "${SKIP_ARGOCD}" != "true" ]]; then
   terraform_apply "terraform/environments/dev/api-service/eks-argocd-bootstrap"
   wait_for_argocd_apps
+fi
+
+if [[ "${INCLUDE_SSM}" == "true" ]]; then
+  terraform_apply "terraform/environments/dev/ssm-parameters"
 fi
 
 log "api-service apply automation completed"
