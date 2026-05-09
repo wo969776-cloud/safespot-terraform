@@ -70,6 +70,7 @@ variable "slack_webhook_recovery_window_days" {
 variable "alb_arn_suffix" {
   description = "ALB ARN suffix. 형식: app/{alb-name}/{id}."
   type        = string
+  default = ""
 }
 
 variable "alb_5xx_elb_threshold" {

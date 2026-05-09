@@ -15,7 +15,6 @@ log_retention_days = 30
 
 # TODO: 아래 네 값을 실제 인프라 값으로 교체한 후 apply
 alert_email    = "201sohyun@naver.com"
-alb_arn_suffix = "app/k8s-safespotdevapi-00c466700d/e7b7aa08dfee8e6e"
 
 enable_observability_iam = true
 # 아래 세 플래그는 실제 ServiceAccount annotation 적용(Helm values/ArgoCD app) 확정 후 활성화

@@ -55,8 +55,8 @@ data "terraform_remote_state" "front_edge" {
 locals {
   # [삭제] alb_arn_suffix, alb_log_bucket_name 제거
 
-  rds_cluster_identifier = data.terraform_remote_state.data_layer.outputs.rds_cluster_identifier
-  redis_cluster_id       = data.terraform_remote_state.data_layer.outputs.redis_cluster_id
+rds_cluster_identifier = data.terraform_remote_state.data_layer.outputs.aurora_cluster_identifier
+redis_cluster_id = data.terraform_remote_state.data_layer.outputs.redis_replication_group_id
 
   sqs_queues = {
     cache_refresh = data.terraform_remote_state.async_worker.outputs.sqs_queue_name_cache_refresh
