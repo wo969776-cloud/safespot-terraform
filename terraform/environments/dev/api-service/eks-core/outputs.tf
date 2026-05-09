@@ -37,3 +37,8 @@ output "oidc_provider" {
   description = "OIDC provider URL without https:// prefix."
   value       = module.eks_core.oidc_provider
 }
+
+output "eks_managed_node_groups" {
+  description = "EKS managed node group outputs."
+  value       = module.eks_core.eks_managed_node_groups
+}

@@ -355,15 +355,10 @@ alb.ingress.kubernetes.io/security-groups: <network.outputs.alb_sg_id>
 | <a name="input_cluster_endpoint_public_access"></a> [cluster\_endpoint\_public\_access](#input\_cluster\_endpoint\_public\_access) | Whether to expose EKS API endpoint publicly. | `bool` | `true` | no |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | EKS cluster name. | `string` | n/a | yes |
 | <a name="input_cluster_version"></a> [cluster\_version](#input\_cluster\_version) | Kubernetes version for EKS. | `string` | `"1.34"` | no |
-| <a name="input_create_managed_node_group"></a> [create\_managed\_node\_group](#input\_create\_managed\_node\_group) | Whether to create the baseline EKS managed node group. Set false for the first cluster-only bootstrap apply, then true after eks-sg-rules is applied. | `bool` | `true` | no |
-| <a name="input_eks_managed_node_group_name"></a> [eks\_managed\_node\_group\_name](#input\_eks\_managed\_node\_group\_name) | Name for the default EKS managed node group. | `string` | n/a | yes |
+| <a name="input_create_managed_node_group"></a> [create\_managed\_node\_group](#input\_create\_managed\_node\_group) | Whether to create EKS managed node groups. Set false for the first cluster-only bootstrap apply, then true after eks-sg-rules is applied. | `bool` | `true` | no |
 | <a name="input_env"></a> [env](#input\_env) | Environment name. | `string` | n/a | yes |
+| <a name="input_managed_node_groups"></a> [managed\_node\_groups](#input\_managed\_node\_groups) | Map of EKS managed node group configurations. | <pre>map(object({<br/>    name           = string<br/>    instance_types = list(string)<br/>    iam_role_name  = string<br/>    min_size       = number<br/>    max_size       = number<br/>    desired_size   = number<br/>    labels         = optional(map(string), {})<br/>    taints = optional(list(object({<br/>      key    = string<br/>      value  = string<br/>      effect = string<br/>    })), [])<br/>  }))</pre> | `{}` | no |
 | <a name="input_network_state_key"></a> [network\_state\_key](#input\_network\_state\_key) | S3 object key for network Terraform state. | `string` | `"environments/dev/network/terraform.tfstate"` | no |
-| <a name="input_node_desired_size"></a> [node\_desired\_size](#input\_node\_desired\_size) | Desired node count. | `number` | `2` | no |
-| <a name="input_node_iam_role_name"></a> [node\_iam\_role\_name](#input\_node\_iam\_role\_name) | IAM role name for EKS managed node group. | `string` | n/a | yes |
-| <a name="input_node_instance_types"></a> [node\_instance\_types](#input\_node\_instance\_types) | Instance types for the default EKS managed node group. | `list(string)` | <pre>[<br/>  "t3.medium"<br/>]</pre> | no |
-| <a name="input_node_max_size"></a> [node\_max\_size](#input\_node\_max\_size) | Maximum node count. | `number` | `3` | no |
-| <a name="input_node_min_size"></a> [node\_min\_size](#input\_node\_min\_size) | Minimum node count. | `number` | `2` | no |
 | <a name="input_project"></a> [project](#input\_project) | Project name. | `string` | `"safespot"` | no |
 | <a name="input_remote_state_bucket"></a> [remote\_state\_bucket](#input\_remote\_state\_bucket) | S3 bucket name for Terraform remote state. | `string` | `"safespot-terraform-state"` | no |
 
@@ -376,6 +371,7 @@ alb.ingress.kubernetes.io/security-groups: <network.outputs.alb_sg_id>
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | EKS cluster name. |
 | <a name="output_cluster_primary_security_group_id"></a> [cluster\_primary\_security\_group\_id](#output\_cluster\_primary\_security\_group\_id) | EKS automatically-created cluster primary security group ID. |
 | <a name="output_cluster_security_group_id"></a> [cluster\_security\_group\_id](#output\_cluster\_security\_group\_id) | EKS cluster security group ID. |
+| <a name="output_eks_managed_node_groups"></a> [eks\_managed\_node\_groups](#output\_eks\_managed\_node\_groups) | EKS managed node group outputs. |
 | <a name="output_node_security_group_id"></a> [node\_security\_group\_id](#output\_node\_security\_group\_id) | EKS node security group ID. |
 | <a name="output_oidc_provider"></a> [oidc\_provider](#output\_oidc\_provider) | OIDC provider URL without https:// prefix. |
 | <a name="output_oidc_provider_arn"></a> [oidc\_provider\_arn](#output\_oidc\_provider\_arn) | OIDC provider ARN. |

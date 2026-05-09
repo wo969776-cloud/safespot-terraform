@@ -57,33 +57,36 @@ module "eks" {
 
   cluster_addons = local.cluster_addons
 
-  eks_managed_node_group_defaults = {
-    ami_type       = "AL2023_x86_64_STANDARD"
-    instance_types = var.node_instance_types
-  }
-
   eks_managed_node_groups = var.create_managed_node_group ? {
-    default = {
-      name = var.eks_managed_node_group_name
+    for k, v in var.managed_node_groups : k => {
+      name = v.name
 
-      iam_role_name            = var.node_iam_role_name
+      iam_role_name            = v.iam_role_name
       iam_role_use_name_prefix = false
 
       ami_type       = "AL2023_x86_64_STANDARD"
-      instance_types = var.node_instance_types
+      instance_types = v.instance_types
 
-      min_size     = var.node_min_size
-      max_size     = var.node_max_size
-      desired_size = var.node_desired_size
+      min_size     = v.min_size
+      max_size     = v.max_size
+      desired_size = v.desired_size
 
-      labels = {
-        role = "system"
-      }
+      labels = merge(
+        {
+          # role 레이블은 과도기 호환용 — manifest/addon values가 safespot.io/* 레이블로 모두 전환된 후 제거
+          role                         = k
+          "safespot.io/node-group"     = k
+          "safespot.io/workload-class" = k
+        },
+        v.labels
+      )
+
+      taints = v.taints
 
       tags = merge(var.tags, {
-        Name         = "${var.cluster_name}-default"
-        NodeGroup    = "default"
-        WorkloadRole = "system"
+        Name          = "${var.cluster_name}-${k}"
+        NodeGroup     = k
+        WorkloadClass = k
       })
     }
   } : {}

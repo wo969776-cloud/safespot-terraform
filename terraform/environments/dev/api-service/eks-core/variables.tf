@@ -50,42 +50,27 @@ variable "cluster_endpoint_private_access" {
   default     = true
 }
 
-variable "eks_managed_node_group_name" {
-  description = "Name for the default EKS managed node group."
-  type        = string
-}
-
-variable "node_iam_role_name" {
-  description = "IAM role name for EKS managed node group."
-  type        = string
-}
-
-variable "node_instance_types" {
-  description = "Instance types for the default EKS managed node group."
-  type        = list(string)
-  default     = ["t3.medium"]
-}
-
-variable "node_min_size" {
-  description = "Minimum node count."
-  type        = number
-  default     = 2
-}
-
-variable "node_max_size" {
-  description = "Maximum node count."
-  type        = number
-  default     = 3
-}
-
-variable "node_desired_size" {
-  description = "Desired node count."
-  type        = number
-  default     = 2
-}
-
 variable "create_managed_node_group" {
-  description = "Whether to create the baseline EKS managed node group. Set false for the first cluster-only bootstrap apply, then true after eks-sg-rules is applied."
+  description = "Whether to create EKS managed node groups. Set false for the first cluster-only bootstrap apply, then true after eks-sg-rules is applied."
   type        = bool
   default     = true
+}
+
+variable "managed_node_groups" {
+  description = "Map of EKS managed node group configurations."
+  type = map(object({
+    name           = string
+    instance_types = list(string)
+    iam_role_name  = string
+    min_size       = number
+    max_size       = number
+    desired_size   = number
+    labels         = optional(map(string), {})
+    taints = optional(list(object({
+      key    = string
+      value  = string
+      effect = string
+    })), [])
+  }))
+  default = {}
 }

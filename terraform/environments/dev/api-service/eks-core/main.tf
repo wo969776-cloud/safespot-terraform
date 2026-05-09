@@ -15,14 +15,7 @@ module "eks_core" {
 
   create_managed_node_group = var.create_managed_node_group
 
-  eks_managed_node_group_name = var.eks_managed_node_group_name
-
-  node_iam_role_name = var.node_iam_role_name
-
-  node_instance_types = var.node_instance_types
-  node_min_size       = var.node_min_size
-  node_max_size       = var.node_max_size
-  node_desired_size   = var.node_desired_size
+  managed_node_groups = var.managed_node_groups
 
   tags = local.common_tags
 }
