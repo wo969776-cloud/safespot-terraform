@@ -41,6 +41,20 @@ resource "aws_vpc_security_group_ingress_rule" "cluster_primary_from_node_api" {
   })
 }
 
+resource "aws_vpc_security_group_ingress_rule" "cluster_to_nodes_prometheus_adapter" {
+  security_group_id            = var.node_security_group_id
+  referenced_security_group_id = var.cluster_primary_security_group_id
+  ip_protocol                  = "tcp"
+  from_port                    = 6443
+  to_port                      = 6443
+  description                  = "EKS control plane to node Prometheus Adapter"
+
+  tags = merge(var.tags, {
+    Name = "eks-cluster-to-node-prometheus-adapter"
+  })
+
+}
+
 resource "aws_vpc_security_group_egress_rule" "node_to_cluster_primary_api" {
   security_group_id            = var.node_security_group_id
   referenced_security_group_id = var.cluster_primary_security_group_id
