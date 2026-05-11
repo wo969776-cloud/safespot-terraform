@@ -70,6 +70,7 @@ serviceAccount:
 | <a name="module_api_core_irsa"></a> [api\_core\_irsa](#module\_api\_core\_irsa) | ../../../../modules/api-service/eks-irsa | n/a |
 | <a name="module_api_public_read_irsa"></a> [api\_public\_read\_irsa](#module\_api\_public\_read\_irsa) | ../../../../modules/api-service/eks-irsa | n/a |
 | <a name="module_external_ingestion_irsa"></a> [external\_ingestion\_irsa](#module\_external\_ingestion\_irsa) | ../../../../modules/api-service/eks-irsa | n/a |
+| <a name="module_pre_scaling_controller_irsa"></a> [pre\_scaling\_controller\_irsa](#module\_pre\_scaling\_controller\_irsa) | ../../../../modules/api-service/eks-irsa | n/a |
 
 ## Resources
 
@@ -101,6 +102,7 @@ serviceAccount:
 | <a name="input_eks_core_state_key"></a> [eks\_core\_state\_key](#input\_eks\_core\_state\_key) | S3 object key for eks-core Terraform state. | `string` | `"environments/dev/api-service/eks-core/terraform.tfstate"` | no |
 | <a name="input_env"></a> [env](#input\_env) | Environment name. | `string` | n/a | yes |
 | <a name="input_external_ingestion_service_account_name"></a> [external\_ingestion\_service\_account\_name](#input\_external\_ingestion\_service\_account\_name) | Kubernetes ServiceAccount name for external-ingestion. | `string` | `"external-ingestion"` | no |
+| <a name="input_pre_scaling_controller_service_account_name"></a> [pre\_scaling\_controller\_service\_account\_name](#input\_pre\_scaling\_controller\_service\_account\_name) | Kubernetes ServiceAccount name for pre-scaling-controller. | `string` | `"pre-scaling-controller"` | no |
 | <a name="input_project"></a> [project](#input\_project) | Project name. | `string` | `"safespot"` | no |
 | <a name="input_remote_state_bucket"></a> [remote\_state\_bucket](#input\_remote\_state\_bucket) | S3 bucket name for Terraform remote state. | `string` | `"safespot-terraform-state"` | no |
 
@@ -121,6 +123,8 @@ serviceAccount:
 | <a name="output_cluster_name"></a> [cluster\_name](#output\_cluster\_name) | EKS cluster name from eks-core remote state. |
 | <a name="output_external_ingestion_irsa_role_arn"></a> [external\_ingestion\_irsa\_role\_arn](#output\_external\_ingestion\_irsa\_role\_arn) | IAM role ARN for external-ingestion IRSA. |
 | <a name="output_external_ingestion_irsa_service_account_subject"></a> [external\_ingestion\_irsa\_service\_account\_subject](#output\_external\_ingestion\_irsa\_service\_account\_subject) | Kubernetes service account subject for external-ingestion IRSA trust policy. |
+| <a name="output_pre_scaling_controller_irsa_role_arn"></a> [pre\_scaling\_controller\_irsa\_role\_arn](#output\_pre\_scaling\_controller\_irsa\_role\_arn) | IAM role ARN for pre-scaling-controller IRSA. |
+| <a name="output_pre_scaling_controller_irsa_service_account_subject"></a> [pre\_scaling\_controller\_irsa\_service\_account\_subject](#output\_pre\_scaling\_controller\_irsa\_service\_account\_subject) | Kubernetes service account subject for pre-scaling-controller IRSA trust policy. |
 | <a name="output_source_eks_core_state_key"></a> [source\_eks\_core\_state\_key](#output\_source\_eks\_core\_state\_key) | S3 state key used as eks-core remote state source. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ---

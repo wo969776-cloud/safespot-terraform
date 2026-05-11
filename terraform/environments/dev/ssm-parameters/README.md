@@ -115,5 +115,6 @@ terraform plan
 | <a name="output_external_ingestion_irsa_role_arn_ssm_parameter_name"></a> [external\_ingestion\_irsa\_role\_arn\_ssm\_parameter\_name](#output\_external\_ingestion\_irsa\_role\_arn\_ssm\_parameter\_name) | SSM parameter name for external-ingestion IRSA role ARN. |
 | <a name="output_parameter_arns"></a> [parameter\_arns](#output\_parameter\_arns) | Created non-sensitive SSM String parameter ARNs. |
 | <a name="output_parameter_names"></a> [parameter\_names](#output\_parameter\_names) | Created non-sensitive SSM String parameter names. |
+| <a name="output_pre_scaling_controller_irsa_role_arn_ssm_parameter_name"></a> [pre\_scaling\_controller\_irsa\_role\_arn\_ssm\_parameter\_name](#output\_pre\_scaling\_controller\_irsa\_role\_arn\_ssm\_parameter\_name) | SSM parameter name for pre-scaling-controller IRSA role ARN. |
 | <a name="output_secure_parameter_paths"></a> [secure\_parameter\_paths](#output\_secure\_parameter\_paths) | SecureString parameter path contract. Values are managed outside Terraform. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

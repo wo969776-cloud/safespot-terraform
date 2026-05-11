@@ -145,3 +145,22 @@ module "external_ingestion_irsa" {
 
   tags = local.common_tags
 }
+
+# ── pre-scaling-controller ───────────────────────────────────────────────────
+#
+# The controller talks to the Kubernetes API through RBAC. A dedicated IRSA role
+# keeps the ServiceAccount contract explicit and allows AWS permissions to be
+# added later without reworking the manifest/SSM value path.
+module "pre_scaling_controller_irsa" {
+  source = "../../../../modules/api-service/eks-irsa"
+
+  role_name            = local.pre_scaling_controller_role_name
+  oidc_provider_arn    = local.oidc_provider_arn
+  oidc_provider        = local.oidc_provider
+  namespace            = var.app_namespace
+  service_account_name = var.pre_scaling_controller_service_account_name
+
+  managed_policy_arns = {}
+
+  tags = local.common_tags
+}

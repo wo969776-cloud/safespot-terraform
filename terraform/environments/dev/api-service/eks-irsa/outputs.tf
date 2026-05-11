@@ -67,3 +67,13 @@ output "external_ingestion_irsa_service_account_subject" {
   description = "Kubernetes service account subject for external-ingestion IRSA trust policy."
   value       = module.external_ingestion_irsa.service_account_subject
 }
+
+output "pre_scaling_controller_irsa_role_arn" {
+  description = "IAM role ARN for pre-scaling-controller IRSA."
+  value       = module.pre_scaling_controller_irsa.role_arn
+}
+
+output "pre_scaling_controller_irsa_service_account_subject" {
+  description = "Kubernetes service account subject for pre-scaling-controller IRSA trust policy."
+  value       = module.pre_scaling_controller_irsa.service_account_subject
+}

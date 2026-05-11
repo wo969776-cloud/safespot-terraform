@@ -30,3 +30,8 @@ output "external_ingestion_irsa_role_arn_ssm_parameter_name" {
   description = "SSM parameter name for external-ingestion IRSA role ARN."
   value       = local.string_parameters.external_ingestion_irsa_role_arn.name
 }
+
+output "pre_scaling_controller_irsa_role_arn_ssm_parameter_name" {
+  description = "SSM parameter name for pre-scaling-controller IRSA role ARN."
+  value       = local.string_parameters.pre_scaling_controller_irsa_role_arn.name
+}

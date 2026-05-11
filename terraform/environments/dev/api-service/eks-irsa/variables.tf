@@ -69,3 +69,8 @@ variable "external_ingestion_service_account_name" {
   default     = "external-ingestion"
 }
 
+variable "pre_scaling_controller_service_account_name" {
+  description = "Kubernetes ServiceAccount name for pre-scaling-controller."
+  type        = string
+  default     = "pre-scaling-controller"
+}

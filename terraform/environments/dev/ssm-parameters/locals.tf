@@ -215,6 +215,12 @@ locals {
       description = "IRSA role ARN for external-ingestion ServiceAccount."
     }
 
+    pre_scaling_controller_irsa_role_arn = {
+      name        = "/safespot/${var.environment}/api-service/irsa/pre-scaling-controller-role-arn"
+      value       = data.terraform_remote_state.api_service_eks_irsa.outputs.pre_scaling_controller_irsa_role_arn
+      description = "IRSA role ARN for pre-scaling-controller ServiceAccount."
+    }
+
     yace_irsa_role_arn = {
       name        = "/safespot/${var.environment}/observability/yace/irsa-role-arn"
       value       = data.terraform_remote_state.ops.outputs.yace_irsa_role_arn

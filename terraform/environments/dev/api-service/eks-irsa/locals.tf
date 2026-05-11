@@ -18,6 +18,8 @@ locals {
   external_ingestion_role_name   = "${var.project}-${var.env}-api-service-iam-role-external-ingestion"
   external_ingestion_policy_name = "${var.project}-${var.env}-api-service-iam-policy-external-ingestion-sqs"
 
+  pre_scaling_controller_role_name = "${var.project}-${var.env}-api-service-iam-role-pre-scaling-controller"
+
   api_core_event_queue_arn = data.terraform_remote_state.async_worker.outputs.event_queue_arn
 
   api_public_read_cache_refresh_queue_arn = data.terraform_remote_state.async_worker.outputs.cache_refresh_queue_arn
