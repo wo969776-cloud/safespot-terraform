@@ -10,6 +10,7 @@ services = [
   "external-ingestion",
   "async-worker",
   "scenario-simulator",
+  "pre-scaling-controller"
 ]
 
 log_retention_days = 30
