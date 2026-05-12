@@ -233,6 +233,12 @@ locals {
       description = "Grafana CloudWatch datasource IRSA role ARN from ops remote state"
     }
 
+    fluentbit_irsa_role_arn = {
+      name        = "/safespot/${var.environment}/observability/fluentbit/irsa-role-arn"
+      value       = data.terraform_remote_state.ops.outputs.fluentbit_irsa_role_arn
+      description = "Fluent Bit IRSA Role ARN for CloudWatch Logs write"
+    }
+
     aurora_cluster_identifier = {
       name        = "/safespot/${var.environment}/data/aurora-cluster-identifier"
       value       = data.terraform_remote_state.data.outputs.aurora_cluster_identifier
