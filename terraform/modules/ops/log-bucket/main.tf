@@ -75,6 +75,19 @@ resource "aws_s3_bucket_lifecycle_configuration" "log" {
     filter { prefix = "${local.prefixes.cloudwatch}/" }
     expiration { days = var.cloudwatch_retention_days }
   }
+
+    rule {
+    id     = "cloudfront-expiry"
+    status = "Enabled"
+
+    filter {
+      prefix = "${local.prefixes.cloudfront}/"
+    }
+
+    expiration {
+      days = var.cloudfront_retention_days
+    }
+  }
 }
 
 # ── 버킷 정책 ─────────────────────────────────────────────────
@@ -120,6 +133,35 @@ data "aws_iam_policy_document" "log" {
 
     actions   = ["s3:PutObject"]
     resources = ["${aws_s3_bucket.log.arn}/${local.prefixes.waf}/AWSLogs/${var.aws_account_id}/*"]
+
+    condition {
+      test     = "StringEquals"
+      variable = "s3:x-amz-acl"
+      values   = ["bucket-owner-full-control"]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "aws:SourceAccount"
+      values   = [var.aws_account_id]
+    }
+  }
+
+    # CloudFront 접근 로그
+  statement {
+    sid    = "AllowCloudFrontLogs"
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["delivery.logs.amazonaws.com"]
+    }
+
+    actions = ["s3:PutObject"]
+
+    resources = [
+      "${aws_s3_bucket.log.arn}/${local.prefixes.cloudfront}/AWSLogs/${var.aws_account_id}/*"
+    ]
 
     condition {
       test     = "StringEquals"

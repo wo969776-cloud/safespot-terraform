@@ -51,6 +51,12 @@ variable "cloudwatch_retention_days" {
   default     = 365
 }
 
+variable "cloudfront_retention_days" {
+  description = "CloudFront 접근 로그 보존 기간 (일)."
+  type        = number
+  default     = 30
+}
+
 # ── 옵션 기능 ─────────────────────────────────────────────────
 
 variable "enable_versioning" {

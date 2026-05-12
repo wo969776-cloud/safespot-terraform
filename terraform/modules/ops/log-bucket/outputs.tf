@@ -42,3 +42,8 @@ output "cloudwatch_export_prefix" {
   description = "CloudWatch Logs export task에 사용할 prefix."
   value       = local.prefixes.cloudwatch
 }
+
+output "cloudfront_log_prefix" {
+  description = "CloudFront 접근 로그 prefix."
+  value       = "${local.prefixes.cloudfront}/AWSLogs/${var.aws_account_id}"
+}
