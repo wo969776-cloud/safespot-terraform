@@ -117,3 +117,8 @@ output "vpc_flow_log_prefix" {
   description = "VPC Flow 로그 설정에 사용할 S3 prefix."
   value       = module.log_bucket.vpc_flow_log_prefix
 }
+
+output "cloudfront_log_prefix" {
+  description = "CloudFront 접근 로그 설정에 사용할 S3 prefix."
+  value       = module.log_bucket.cloudfront_log_prefix
+}

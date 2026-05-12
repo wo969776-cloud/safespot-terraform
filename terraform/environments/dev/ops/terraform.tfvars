@@ -29,3 +29,6 @@ grafana_service_account_name = "safespot-grafana"
 
 yace_namespace            = "monitoring"
 yace_service_account_name = "safespot-yace"
+
+fluentbit_namespace            = "monitoring"
+fluentbit_service_account_name = "safespot-fluent-bit"
