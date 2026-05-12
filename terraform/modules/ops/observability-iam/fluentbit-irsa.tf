@@ -8,12 +8,12 @@ resource "aws_iam_policy" "fluentbit_cloudwatch_write" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid    = "AllowLogGroupCreate"
+        Sid    = "AllowCreateLogGroup"
         Effect = "Allow"
         Action = [
-          "logs:CreateLogGroup",
+          "logs:CreateLogGroup"
         ]
-        Resource = local.fluentbit_log_group_arns
+        Resource = "*"
       },
       {
         Sid    = "AllowLogStreamWrite"
@@ -21,7 +21,7 @@ resource "aws_iam_policy" "fluentbit_cloudwatch_write" {
         Action = [
           "logs:CreateLogStream",
           "logs:PutLogEvents",
-          "logs:DescribeLogStreams",
+          "logs:DescribeLogStreams"
         ]
         Resource = [
           for arn in local.fluentbit_log_group_arns :
@@ -32,10 +32,10 @@ resource "aws_iam_policy" "fluentbit_cloudwatch_write" {
         Sid    = "AllowLogGroupDescribe"
         Effect = "Allow"
         Action = [
-          "logs:DescribeLogGroups",
+          "logs:DescribeLogGroups"
         ]
         Resource = "*"
-      },
+      }
     ]
   })
 
@@ -64,7 +64,7 @@ module "fluentbit_irsa" {
 resource "aws_ssm_parameter" "fluentbit_irsa_role_arn" {
   count = var.enable_fluentbit_irsa ? 1 : 0
 
-  name        = "/${var.project}/${var.environment}/observability/fluentbit/irsa-role-arn"
+  name        = "/${var.project}/${var.environment}/observability/fluent-bit/irsa-role-arn"
   description = "Fluent Bit IRSA Role ARN for CloudWatch Logs write"
   type        = "String"
   value       = module.fluentbit_irsa[0].role_arn
@@ -72,7 +72,7 @@ resource "aws_ssm_parameter" "fluentbit_irsa_role_arn" {
   overwrite = true
 
   tags = {
-    Name      = "/${var.project}/${var.environment}/observability/fluentbit/irsa-role-arn"
+    Name      = "/${var.project}/${var.environment}/observability/fluent-bit/irsa-role-arn"
     Component = "fluent-bit"
     Purpose   = "fluentbit-irsa-role-arn"
   }
