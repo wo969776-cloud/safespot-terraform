@@ -16,5 +16,6 @@ locals {
     vpc_flow   = "vpc-flow"
     rds        = "rds"
     cloudwatch = "cloudwatch"
+    cloudfront = "cloudfront"
   }
 }
