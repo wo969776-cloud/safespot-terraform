@@ -69,10 +69,17 @@ module "api_core_irsa" {
 
 data "aws_iam_policy_document" "api_public_read_sqs" {
   statement {
-    sid       = "AllowSendMessageToCacheRefreshQueue"
-    effect    = "Allow"
-    actions   = ["sqs:SendMessage"]
-    resources = [local.api_public_read_cache_refresh_queue_arn]
+    sid    = "AllowSendMessageToCacheQueues"
+    effect = "Allow"
+    actions = [
+      "sqs:SendMessage",
+      "sqs:GetQueueAttributes",
+    ]
+    resources = [
+      local.api_public_read_cache_refresh_queue_arn,
+      local.api_public_read_readmodel_refresh_queue_arn,
+      local.api_public_read_environment_cache_refresh_queue_arn,
+    ]
   }
 }
 
@@ -108,11 +115,15 @@ module "api_public_read_irsa" {
 
 data "aws_iam_policy_document" "external_ingestion_sqs" {
   statement {
-    sid     = "AllowSendMessageToCacheRefreshQueues"
-    effect  = "Allow"
-    actions = ["sqs:SendMessage"]
+    sid    = "AllowSendMessageToCacheQueues"
+    effect = "Allow"
+    actions = [
+      "sqs:SendMessage",
+      "sqs:GetQueueAttributes",
+    ]
     resources = [
       local.external_ingestion_cache_refresh_queue_arn,
+      local.external_ingestion_readmodel_refresh_queue_arn,
       local.external_ingestion_environment_cache_refresh_queue_arn,
     ]
   }
