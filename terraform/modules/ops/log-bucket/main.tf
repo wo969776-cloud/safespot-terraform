@@ -8,6 +8,24 @@ resource "aws_s3_bucket" "log" {
   tags          = local.tags
 }
 
+resource "aws_s3_bucket_ownership_controls" "log" {
+  bucket = aws_s3_bucket.log.id
+
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+
+resource "aws_s3_bucket_acl" "log" {
+  bucket = aws_s3_bucket.log.id
+  acl    = "private"
+
+  depends_on = [
+    aws_s3_bucket_ownership_controls.log
+  ]
+}
+
+
 resource "aws_s3_bucket_public_access_block" "log" {
   bucket                  = aws_s3_bucket.log.id
   block_public_acls       = true
