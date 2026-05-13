@@ -68,11 +68,10 @@ nodePools:
       os: [linux]
       capacityType: [spot]
       # capacityType: [spot, on-demand]  # spot 수급 불안정 시 on-demand 추가
-      instanceCategory: [c, m]
-      instanceGeneration: "2"
+      instanceTypes: ["c5a.xlarge"]
     limits:
-      cpu: "16"
-      memory: 32Gi
+      cpu: "24"
+      memory: 48Gi
     disruption:
       consolidationPolicy: WhenEmpty
       consolidateAfter: 5m

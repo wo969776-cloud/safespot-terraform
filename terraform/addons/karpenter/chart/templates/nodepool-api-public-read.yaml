@@ -29,12 +29,9 @@ spec:
         - key: karpenter.sh/capacity-type
           operator: In
           values: {{ toJson .Values.nodePools.apiPublicRead.requirements.capacityType }}
-        - key: karpenter.k8s.aws/instance-category
+        - key: node.kubernetes.io/instance-type
           operator: In
-          values: {{ toJson .Values.nodePools.apiPublicRead.requirements.instanceCategory }}
-        - key: karpenter.k8s.aws/instance-generation
-          operator: Gt
-          values: [{{ .Values.nodePools.apiPublicRead.requirements.instanceGeneration | quote }}]
+          values: {{ toJson .Values.nodePools.apiPublicRead.requirements.instanceTypes }}
   limits:
     cpu: {{ .Values.nodePools.apiPublicRead.limits.cpu | quote }}
     memory: {{ .Values.nodePools.apiPublicRead.limits.memory }}

@@ -24,3 +24,11 @@ nodeClass:
     Project: safespot
     Environment: dev
     ManagedBy: karpenter
+
+nodePools:
+  apiPublicRead:
+    requirements:
+      instanceTypes: ["c5a.xlarge"]
+    limits:
+      cpu: "24"
+      memory: 48Gi
