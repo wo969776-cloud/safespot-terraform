@@ -113,6 +113,11 @@ variable "metrics_namespace" {
   default     = ""
 }
 
+variable "spring_profiles_active" {
+  description = "Comma-separated Spring profiles to activate. Must include 'readmodel-worker' for DisasterReadModelWarmupRequested handler."
+  type        = string
+}
+
 variable "common_tags" {
   description = "Common tags"
   type        = map(string)

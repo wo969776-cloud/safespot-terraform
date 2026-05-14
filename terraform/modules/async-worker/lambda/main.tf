@@ -83,14 +83,15 @@ resource "aws_lambda_function" "async_worker" {
 
   environment {
     variables = {
-      DB_HOST           = var.db_host
-      DB_PORT           = tostring(var.db_port)
-      DB_NAME           = var.db_name
-      DB_USER           = var.db_user
-      DB_PASSWORD       = var.db_password
-      REDIS_HOST        = var.redis_host
-      REDIS_PORT        = "6379"
-      METRICS_NAMESPACE = var.metrics_namespace
+      SPRING_PROFILES_ACTIVE = var.spring_profiles_active
+      DB_HOST                = var.db_host
+      DB_PORT                = tostring(var.db_port)
+      DB_NAME                = var.db_name
+      DB_USER                = var.db_user
+      DB_PASSWORD            = var.db_password
+      REDIS_HOST             = var.redis_host
+      REDIS_PORT             = "6379"
+      METRICS_NAMESPACE      = var.metrics_namespace
     }
   }
 
