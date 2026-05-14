@@ -50,6 +50,9 @@ module "lambda" {
   lambda_filename = var.lambda_filename
   lambda_handler  = var.lambda_handler
 
+  # readmodel-worker: @Profile("readmodel-worker") 조건 핸들러 활성화
+  spring_profiles_active = "${var.environment},readmodel-worker"
+
   cache_refresh_queue_arn             = module.sqs.cache_refresh_queue_arn
   readmodel_refresh_queue_arn         = module.sqs.readmodel_refresh_queue_arn
   environment_cache_refresh_queue_arn = module.sqs.environment_cache_refresh_queue_arn
@@ -57,11 +60,11 @@ module "lambda" {
   private_subnet_ids = data.terraform_remote_state.network.outputs.private_app_subnet_ids
   lambda_sg_id       = data.terraform_remote_state.network.outputs.lambda_sg_id
 
-  db_host     = data.terraform_remote_state.data.outputs.aurora_cluster_endpoint
-  db_port     = data.terraform_remote_state.data.outputs.aurora_port
-  db_name     = data.terraform_remote_state.data.outputs.aurora_db_name
-  db_user     = data.aws_ssm_parameter.db_username.value
-  db_password = data.aws_ssm_parameter.db_password.value
+  db_host           = data.terraform_remote_state.data.outputs.aurora_cluster_endpoint
+  db_port           = data.terraform_remote_state.data.outputs.aurora_port
+  db_name           = data.terraform_remote_state.data.outputs.aurora_db_name
+  db_user           = data.aws_ssm_parameter.db_username.value
+  db_password       = data.aws_ssm_parameter.db_password.value
   redis_host        = data.terraform_remote_state.data.outputs.redis_primary_endpoint
   metrics_namespace = var.metrics_namespace
 
