@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: karpenter-configs
+  namespace: argocd
+  annotations:
+    # Must run after karpenter (wave 1) so CRDs are available
+    argocd.argoproj.io/sync-wave: "2"
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/project-safespot/safespot-terraform.git
+    targetRevision: infra/api-service
+    path: terraform/addons/karpenter/chart
+    helm:
+      valueFiles:
+        - values-dev.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    # EC2NodeClass and NodePool are cluster-scoped; namespace is unused but required
+    namespace: kube-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
+      - ServerSideApply=true

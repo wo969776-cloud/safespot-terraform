@@ -1,0 +1,8 @@
+clusterSecretStore:
+  name: ssm-parameter-store
+  provider:
+    region: ap-northeast-2
+    service: ParameterStore
+  serviceAccountRef:
+    name: external-secrets
+    namespace: external-secrets

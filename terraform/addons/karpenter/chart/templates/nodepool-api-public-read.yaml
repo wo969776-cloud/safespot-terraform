@@ -1,0 +1,41 @@
+{{- if .Values.nodePools.apiPublicRead.enabled }}
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: api-public-read
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  template:
+    metadata:
+      labels:
+        {{- toYaml .Values.nodePools.apiPublicRead.labels | nindent 8 }}
+    spec:
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: {{ .Values.nodeClass.name }}
+      taints:
+        - key: {{ .Values.nodePools.apiPublicRead.taint.key }}
+          value: {{ .Values.nodePools.apiPublicRead.taint.value }}
+          effect: {{ .Values.nodePools.apiPublicRead.taint.effect }}
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: {{ toJson .Values.nodePools.apiPublicRead.requirements.arch }}
+        - key: kubernetes.io/os
+          operator: In
+          values: {{ toJson .Values.nodePools.apiPublicRead.requirements.os }}
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: {{ toJson .Values.nodePools.apiPublicRead.requirements.capacityType }}
+        - key: node.kubernetes.io/instance-type
+          operator: In
+          values: {{ toJson .Values.nodePools.apiPublicRead.requirements.instanceTypes }}
+  limits:
+    cpu: {{ .Values.nodePools.apiPublicRead.limits.cpu | quote }}
+    memory: {{ .Values.nodePools.apiPublicRead.limits.memory }}
+  disruption:
+    consolidationPolicy: {{ .Values.nodePools.apiPublicRead.disruption.consolidationPolicy }}
+    consolidateAfter: {{ .Values.nodePools.apiPublicRead.disruption.consolidateAfter }}
+{{- end }}

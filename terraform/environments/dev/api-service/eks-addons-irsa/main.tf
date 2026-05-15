@@ -1,0 +1,141 @@
+# ============================================================
+# ExternalDNS IAM Policy
+# ============================================================
+data "aws_route53_zone" "external_dns" {
+  name         = var.external_dns_zone_name
+  private_zone = false
+}
+
+data "aws_iam_policy_document" "external_dns" {
+  statement {
+    sid    = "AllowExternalDNSRecordChanges"
+    effect = "Allow"
+
+    actions = [
+      "route53:ChangeResourceRecordSets",
+    ]
+
+    resources = [
+      data.aws_route53_zone.external_dns.arn,
+    ]
+  }
+
+  statement {
+    sid    = "AllowExternalDNSRead"
+    effect = "Allow"
+
+    actions = [
+      "route53:ListHostedZones",
+      "route53:ListResourceRecordSets",
+      "route53:ListTagsForResource",
+    ]
+
+    resources = ["*"]
+  }
+}
+
+resource "aws_iam_policy" "external_dns" {
+  name        = local.external_dns_policy_name
+  description = "IAM policy for ExternalDNS to manage Route53 records"
+  policy      = data.aws_iam_policy_document.external_dns.json
+
+  tags = merge(local.common_tags, {
+    Name      = local.external_dns_policy_name
+    Workload  = "external-dns"
+    Namespace = var.external_dns_namespace
+  })
+}
+
+# ============================================================
+# ExternalDNS IRSA
+# ============================================================
+module "external_dns_irsa" {
+  source = "../../../../modules/api-service/eks-irsa"
+
+  role_name            = local.external_dns_role_name
+  oidc_provider_arn    = local.oidc_provider_arn
+  oidc_provider        = local.oidc_provider
+  namespace            = var.external_dns_namespace
+  service_account_name = var.external_dns_service_account_name
+  managed_policy_arns = {
+    external_dns = aws_iam_policy.external_dns.arn
+  }
+  inline_policy_json = null
+
+  tags = local.common_tags
+}
+
+# ============================================================
+# External Secrets Operator IAM Policy
+# ============================================================
+data "aws_iam_policy_document" "external_secrets" {
+  statement {
+    sid    = "SSMParameterStoreRead"
+    effect = "Allow"
+
+    actions = [
+      "ssm:GetParameter",
+      "ssm:GetParameters",
+      "ssm:GetParametersByPath",
+    ]
+
+    resources = [
+      "arn:aws:ssm:${var.aws_region}:${data.aws_caller_identity.current.account_id}:parameter/${var.project}/${var.env}/*",
+    ]
+  }
+}
+
+resource "aws_iam_policy" "external_secrets" {
+  name        = local.external_secrets_policy_name
+  description = "IAM policy for External Secrets Operator to access SSM Parameter Store"
+  policy      = data.aws_iam_policy_document.external_secrets.json
+
+  tags = merge(local.common_tags, {
+    Name      = local.external_secrets_policy_name
+    Workload  = "external-secrets"
+    Namespace = var.external_secrets_namespace
+  })
+}
+
+# ============================================================
+# AWS EBS CSI Driver IRSA
+# ============================================================
+module "ebs_csi_irsa" {
+  source = "../../../../modules/api-service/eks-irsa"
+
+  role_name            = local.ebs_csi_role_name
+  oidc_provider_arn    = local.oidc_provider_arn
+  oidc_provider        = local.oidc_provider
+  namespace            = var.ebs_csi_namespace
+  service_account_name = var.ebs_csi_service_account_name
+
+  managed_policy_arns = {
+    ebs_csi = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+  }
+
+  inline_policy_json = null
+
+  tags = merge(local.common_tags, {
+    Workload  = "aws-ebs-csi-driver"
+    Namespace = var.ebs_csi_namespace
+  })
+}
+
+# ============================================================
+# External Secrets Operator IRSA
+# ============================================================
+module "external_secrets_irsa" {
+  source = "../../../../modules/api-service/eks-irsa"
+
+  role_name            = local.external_secrets_role_name
+  oidc_provider_arn    = local.oidc_provider_arn
+  oidc_provider        = local.oidc_provider
+  namespace            = var.external_secrets_namespace
+  service_account_name = var.external_secrets_service_account_name
+  managed_policy_arns = {
+    external_secrets = aws_iam_policy.external_secrets.arn
+  }
+  inline_policy_json = null
+
+  tags = local.common_tags
+}

@@ -1,0 +1,50 @@
+# Chart: external-secrets 0.11.0 (https://charts.external-secrets.io)
+# role-arn: run scripts/init-addon-values.sh to populate from Terraform output
+#   source: terraform -chdir=terraform/environments/dev/api-service/eks-addons-irsa output -raw external_secrets_irsa_role_arn
+installCRDs: true
+
+serviceAccount:
+  create: true
+  name: external-secrets
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::154335823230:role/safespot-dev-external-secrets-irsa"
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    memory: 256Mi
+
+nodeSelector:
+  role: system
+
+tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+  - key: safespot.io/dedicated
+    operator: Equal
+    value: system
+    effect: NoSchedule
+
+webhook:
+  nodeSelector:
+    role: system
+  tolerations:
+    - key: CriticalAddonsOnly
+      operator: Exists
+    - key: safespot.io/dedicated
+      operator: Equal
+      value: system
+      effect: NoSchedule
+
+certController:
+  nodeSelector:
+    role: system
+  tolerations:
+    - key: CriticalAddonsOnly
+      operator: Exists
+    - key: safespot.io/dedicated
+      operator: Equal
+      value: system
+      effect: NoSchedule

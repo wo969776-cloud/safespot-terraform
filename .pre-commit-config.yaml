@@ -1,0 +1,21 @@
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.83.0
+    hooks:
+      - id: terraform_fmt
+        files: ^terraform/(environments/dev/(api-service/(eks-core|eks-karpenter|eks-irsa|eks-addons-irsa)|ssm-parameters)|modules/(api-service/(eks-core|eks-karpenter|eks-irsa|eks-addons-irsa)|ssm-parameters))/
+
+      - id: terraform_validate
+        #stages: [manual]
+        files: ^terraform/environments/dev/(api-service/(eks-core|eks-karpenter|eks-irsa|eks-addons-irsa)|ssm-parameters)/
+
+      - id: terraform_tflint
+        files: ^terraform/environments/dev/(api-service/(eks-core|eks-karpenter|eks-irsa|eks-addons-irsa)|ssm-parameters)/
+
+      - id: terraform_docs
+        #stages: [manual]
+        files: ^terraform/(environments/dev/(api-service/(eks-core|eks-karpenter|eks-irsa|eks-addons-irsa)|ssm-parameters)|modules/(api-service/(eks-core|eks-karpenter|eks-irsa|eks-addons-irsa)|ssm-parameters))/
+        args:
+          - --hook-config=--path-to-file=README.md
+          - --hook-config=--add-to-existing-file=true
+          - --hook-config=--create-file-if-not-exist=true

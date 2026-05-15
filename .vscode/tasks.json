@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "terraform-validate",
+      "type": "shell",
+      "command": "terraform validate",
+
+      "dependsOn": ["tflint"],
+
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "tflint",
+      "type": "shell",
+      "command": "tflint"
+    },
+    {
+      "label": "terraform-plan-dev-api",
+      "type": "shell",
+      "command": "./scripts/plan.sh terraform/environments/dev/api-service"
+    }
+  ]
+}

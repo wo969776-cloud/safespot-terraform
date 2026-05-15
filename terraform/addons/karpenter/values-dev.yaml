@@ -1,0 +1,35 @@
+# Chart: karpenter 1.2.0 (oci://public.ecr.aws/karpenter/karpenter)
+# IRSA namespace: kube-system — matches eks-karpenter Terraform module (var.karpenter_namespace)
+# role-arn: run scripts/init-addon-values.sh to populate from Terraform output
+#   source: terraform -chdir=terraform/environments/dev/api-service/eks-karpenter output -raw karpenter_controller_role_arn
+serviceAccount:
+  create: true
+  name: karpenter
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::154335823230:role/safespot-dev-api-service-iam-role-karpenter-controller"
+
+settings:
+  clusterName: safespot-dev-eks
+  # clusterEndpoint is auto-discovered by Karpenter v1.x from the EKS API
+  interruptionQueue: safespot-dev-api-service-sqs-karpenter
+
+controller:
+  resources:
+    requests:
+      cpu: 1
+      memory: 1Gi
+    limits:
+      memory: 1Gi
+
+nodeSelector:
+  role: system
+
+tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+  - key: safespot.io/dedicated
+    operator: Equal
+    value: system
+    effect: NoSchedule
+
+logLevel: info

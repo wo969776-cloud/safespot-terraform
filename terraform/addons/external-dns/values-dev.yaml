@@ -1,0 +1,46 @@
+# Chart: external-dns 1.15.0 (https://kubernetes-sigs.github.io/external-dns/)
+# role-arn: run scripts/init-addon-values.sh to populate from Terraform output
+#   source: terraform -chdir=terraform/environments/dev/api-service/eks-addons-irsa output -raw external_dns_irsa_role_arn
+provider:
+  name: aws
+
+env:
+  - name: AWS_DEFAULT_REGION
+    value: ap-northeast-2
+
+serviceAccount:
+  create: true
+  name: external-dns
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::154335823230:role/safespot-dev-external-dns-irsa"
+
+sources:
+  - ingress
+  - service
+
+registry: txt
+txtOwnerId: safespot-dev-eks
+
+domainFilters:
+  - safespot.site
+
+policy: sync
+logLevel: info
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    memory: 128Mi
+
+nodeSelector:
+  role: system
+
+tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+  - key: safespot.io/dedicated
+    operator: Equal
+    value: system
+    effect: NoSchedule

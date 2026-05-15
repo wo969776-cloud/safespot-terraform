@@ -1,0 +1,18 @@
+# ESO ClusterSecretStore defaults.
+# Override in values-dev.yaml (or values-<env>.yaml).
+
+clusterSecretStore:
+  # Name referenced by ExternalSecret resources: clusterSecretStoreRef.name
+  name: ssm-parameter-store
+
+  provider:
+    # AWS region for the secret backend
+    region: ap-northeast-2
+    # Backend service for AWS SSM Parameter Store
+    service: ParameterStore
+
+  # IRSA service account that ESO uses to authenticate with AWS.
+  # Must match the SA annotated with the IRSA role ARN in the ESO controller chart.
+  serviceAccountRef:
+    name: external-secrets
+    namespace: external-secrets

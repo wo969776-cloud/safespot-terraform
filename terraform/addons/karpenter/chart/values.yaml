@@ -1,0 +1,77 @@
+# Karpenter EC2NodeClass and NodePool defaults.
+# Override in values-dev.yaml (or values-<env>.yaml).
+
+nodeClass:
+  name: default
+  amiAlias: al2023@latest
+
+  # IAM role name for Karpenter-provisioned nodes (NOT ARN, just name).
+  # Source: terraform -chdir=terraform/environments/dev/api-service/eks-karpenter output -raw karpenter_node_role_name
+  nodeRoleName: ""
+
+  # SQS queue name for Spot interruption handling.
+  # Controller setting — must also match settings.interruptionQueue in
+  # terraform/addons/karpenter/values-dev.yaml.
+  # Source: terraform -chdir=terraform/environments/dev/api-service/eks-karpenter output -raw karpenter_queue_name
+  interruptionQueue: ""
+
+  discovery:
+    # Tag key/value used to auto-select subnets and security groups.
+    # Matches the tag set by terraform/modules/network/sg and vpc:
+    #   "kubernetes.io/cluster/safespot-dev" = "owned"
+    tagKey: kubernetes.io/cluster/safespot-dev
+    tagValue: "owned"
+
+  # Full selector terms. When non-empty these override the discovery tag selectors.
+  subnetSelectorTerms: []
+  securityGroupSelectorTerms: []
+
+  tags:
+    ManagedBy: karpenter
+
+nodePools:
+  # Default pool is disabled — system/ops/app workloads are handled by MNG.
+  # Enable via values override only if a general Karpenter pool is needed.
+  default:
+    enabled: false
+    labels:
+      role: workload
+      safespot.io/node-group: karpenter-default
+      safespot.io/workload-class: workload
+    requirements:
+      arch: [amd64]
+      os: [linux]
+      capacityType: [spot, on-demand]
+      instanceCategory: [c, m, r]
+      instanceGeneration: "2"
+    limits:
+      cpu: "100"
+      memory: 400Gi
+    disruption:
+      consolidationPolicy: WhenEmptyOrUnderutilized
+      consolidateAfter: 1m
+
+  # public-surge pool: api-public-read burst/surge 전용
+  apiPublicRead:
+    enabled: true
+    labels:
+      # role은 과도기 호환용 — application manifest가 safespot.io/* nodeSelector로 전환 완료 후 제거
+      role: api-public-read
+      safespot.io/node-group: public-surge
+      safespot.io/workload-class: public
+    taint:
+      key: safespot.io/dedicated
+      value: public-surge
+      effect: NoSchedule
+    requirements:
+      arch: [amd64]
+      os: [linux]
+      capacityType: [spot]
+      # capacityType: [spot, on-demand]  # spot 수급 불안정 시 on-demand 추가
+      instanceTypes: ["c5a.xlarge"]
+    limits:
+      cpu: "24"
+      memory: 48Gi
+    disruption:
+      consolidationPolicy: WhenEmpty
+      consolidateAfter: 5m

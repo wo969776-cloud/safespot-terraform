@@ -1,0 +1,26 @@
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: {{ .Values.nodeClass.name }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  amiSelectorTerms:
+    - alias: {{ .Values.nodeClass.amiAlias }}
+  role: {{ required "nodeClass.nodeRoleName must be set (source: eks-karpenter output karpenter_node_role_name)" .Values.nodeClass.nodeRoleName }}
+  subnetSelectorTerms:
+    {{- if .Values.nodeClass.subnetSelectorTerms }}
+    {{- toYaml .Values.nodeClass.subnetSelectorTerms | nindent 4 }}
+    {{- else }}
+    - tags:
+        {{ .Values.nodeClass.discovery.tagKey }}: {{ required "nodeClass.discovery.tagValue must be set" .Values.nodeClass.discovery.tagValue }}
+    {{- end }}
+  securityGroupSelectorTerms:
+    {{- if .Values.nodeClass.securityGroupSelectorTerms }}
+    {{- toYaml .Values.nodeClass.securityGroupSelectorTerms | nindent 4 }}
+    {{- else }}
+    - tags:
+        {{ .Values.nodeClass.discovery.tagKey }}: {{ .Values.nodeClass.discovery.tagValue }}
+    {{- end }}
+  tags:
+    {{- toYaml .Values.nodeClass.tags | nindent 4 }}
