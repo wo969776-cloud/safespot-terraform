@@ -1,7 +1,7 @@
 resource "aws_wafv2_web_acl" "main" {
   provider    = aws.us_east_1
   name        = "${var.project}-${var.environment}-waf"
-  description = "SafeSpot WAF - CloudFront 앞단 악성 트래픽 차단"
+  description = "SafeSpot WAF - CloudFront -CloudFront protection"
   scope       = "CLOUDFRONT"
 
   default_action {
@@ -85,7 +85,7 @@ resource "aws_wafv2_web_acl" "main" {
 
 # WAF 로그 → CloudWatch Logs
 resource "aws_cloudwatch_log_group" "waf" {
-  provider = aws.us_east_1
+  provider          = aws.us_east_1
   # WAF 로그 그룹명은 반드시 aws-waf-logs- 로 시작해야 함
   name              = "aws-waf-logs-${var.project}-${var.environment}"
   retention_in_days = 30
