@@ -1,6 +1,44 @@
+# Terraform working directories
 **/.terraform/*
+.terraform/
+
+# Terraform state files
 *.tfstate
 *.tfstate.*
+
+# Terraform plan files
+tfplan
+tfplan.*
+*.tfplan
+*.tfplan.*
+.tfplan
+.tfplan.*
+
+# Terraform crash logs
 crash.log
+crash.*.log
+
+# Terraform local override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Local variable files
+*.local.tfvars
+*.local.tfvars.json
+*.auto.tfvars
+*.auto.tfvars.json
+
+# AWS / environment secrets
 .aws/
 .env
+.env.*
+!.env.example
+
+# Local tool / OS artifacts
+.DS_Store
+Thumbs.db
+
+# Local agent/editor settings
+.claude/
