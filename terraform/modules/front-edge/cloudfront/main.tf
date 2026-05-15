@@ -73,7 +73,7 @@ resource "aws_cloudfront_distribution" "main" {
     viewer_protocol_policy   = "redirect-to-https"
     allowed_methods          = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
     cached_methods           = ["GET", "HEAD"]
-    compress        = true
+    compress                 = true
     cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # CachingDisabled
     origin_request_policy_id = "b689b0a8-53d0-40ab-baf2-68738e2966ac" # AllViewerExceptHostHeader
   }
@@ -85,7 +85,7 @@ resource "aws_cloudfront_distribution" "main" {
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
-    compress        = true
+    compress               = true
     cache_policy_id        = aws_cloudfront_cache_policy.shelters.id
   }
 
@@ -96,7 +96,7 @@ resource "aws_cloudfront_distribution" "main" {
     viewer_protocol_policy = "redirect-to-https"
     allowed_methods        = ["GET", "HEAD"]
     cached_methods         = ["GET", "HEAD"]
-    compress        = true
+    compress               = true
     cache_policy_id        = aws_cloudfront_cache_policy.disaster.id
   }
 
@@ -164,7 +164,7 @@ resource "aws_cloudfront_cache_policy" "shelters" {
   default_ttl = 30
   min_ttl     = 0
   max_ttl     = 60
-  
+
 
   parameters_in_cache_key_and_forwarded_to_origin {
     cookies_config { cookie_behavior = "none" }
