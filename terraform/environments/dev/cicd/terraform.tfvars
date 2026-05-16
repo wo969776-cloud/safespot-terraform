@@ -29,6 +29,10 @@ frontend_deploy_repos = [
   "safespot-front",
 ]
 
+lambda_deploy_repos = [
+  "safespot-application",
+]
+
 terraform_state_bucket = "safespot-terraform-state"
 
 frontend_s3_bucket         = "safespot-dev-frontend"

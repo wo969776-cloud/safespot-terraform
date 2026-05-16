@@ -277,6 +277,37 @@ resource "aws_iam_policy" "frontend_deploy" {
   })
 }
 
+resource "aws_iam_policy" "lambda_deploy" {
+  count = length(var.lambda_deploy_repos) > 0 ? 1 : 0
+  name  = "${local.name_prefix}-iam-policy-lambda-deploy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowLambdaDeploy"
+        Effect = "Allow"
+        Action = [
+          "lambda:GetFunction",
+          "lambda:GetFunctionConfiguration",
+          "lambda:UpdateFunctionCode",
+          "lambda:PublishVersion",
+          "lambda:UpdateAlias",
+          "lambda:ListAliases"
+        ]
+        Resource = [
+          "arn:aws:lambda:*:${local.account_id}:function:${var.project}-${var.environment}-async-worker"
+        ]
+      }
+    ]
+  })
+
+  tags = merge(var.common_tags, {
+    Name    = "${local.name_prefix}-iam-policy-lambda-deploy"
+    Service = "lambda"
+  })
+}
+
 # Frontend deploy: front repo만
 resource "aws_iam_role_policy_attachment" "frontend_deploy" {
   for_each = var.frontend_s3_bucket != "" ? toset([
@@ -285,4 +316,14 @@ resource "aws_iam_role_policy_attachment" "frontend_deploy" {
 
   role       = aws_iam_role.github_actions[each.key].name
   policy_arn = aws_iam_policy.frontend_deploy[0].arn
+}
+
+# Lambda deploy: application repo only
+resource "aws_iam_role_policy_attachment" "lambda_deploy" {
+  for_each = length(var.lambda_deploy_repos) > 0 ? toset([
+    for repo in var.lambda_deploy_repos : "${var.github_org}/${repo}"
+  ]) : toset([])
+
+  role       = aws_iam_role.github_actions[each.key].name
+  policy_arn = aws_iam_policy.lambda_deploy[0].arn
 }

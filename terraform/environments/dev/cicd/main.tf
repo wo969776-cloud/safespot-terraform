@@ -32,6 +32,7 @@ module "cicd" {
   ecr_push_repos        = var.ecr_push_repos
   terraform_repos       = var.terraform_repos
   frontend_deploy_repos = var.frontend_deploy_repos
+  lambda_deploy_repos   = var.lambda_deploy_repos
 
   terraform_state_bucket       = var.terraform_state_bucket
   terraform_state_key_prefixes = local.terraform_state_key_prefixes
