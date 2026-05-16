@@ -45,6 +45,12 @@ variable "frontend_deploy_repos" {
   default     = []
 }
 
+variable "lambda_deploy_repos" {
+  description = "Lambda code deploy 권한을 받을 repo 목록 (short name, org 제외)"
+  type        = list(string)
+  default     = []
+}
+
 variable "allowed_branches" {
   type    = list(string)
   default = ["main"]

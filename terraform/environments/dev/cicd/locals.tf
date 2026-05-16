@@ -1,9 +1,4 @@
 locals {
-  domain    = "ops"
-  subdomain = "cicd"
-
-  name_prefix = "${var.project}-${var.environment}-${local.domain}-${local.subdomain}"
-
   remote_state_bucket = var.terraform_state_bucket
   remote_state_region = var.aws_region
 
