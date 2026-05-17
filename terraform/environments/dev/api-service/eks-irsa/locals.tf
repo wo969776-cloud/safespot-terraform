@@ -20,7 +20,9 @@ locals {
 
   pre_scaling_controller_role_name = "${var.project}-${var.env}-api-service-iam-role-pre-scaling-controller"
 
-  api_core_event_queue_arn = data.terraform_remote_state.async_worker.outputs.event_queue_arn
+  api_core_event_queue_arn                       = data.terraform_remote_state.async_worker.outputs.event_queue_arn
+  scenario_simulator_cache_refresh_queue_arn     = data.terraform_remote_state.async_worker.outputs.cache_refresh_queue_arn
+  scenario_simulator_readmodel_refresh_queue_arn = data.terraform_remote_state.async_worker.outputs.readmodel_refresh_queue_arn
 
   api_public_read_cache_refresh_queue_arn             = data.terraform_remote_state.async_worker.outputs.cache_refresh_queue_arn
   api_public_read_readmodel_refresh_queue_arn         = data.terraform_remote_state.async_worker.outputs.readmodel_refresh_queue_arn

@@ -35,6 +35,18 @@ data "aws_iam_policy_document" "api_core_sqs" {
     actions   = ["sqs:SendMessage"]
     resources = [local.api_core_event_queue_arn]
   }
+
+  statement {
+    sid    = "AllowScenarioSimulatorSendMessageToAsyncWorkerQueues"
+    effect = "Allow"
+    actions = [
+      "sqs:SendMessage",
+    ]
+    resources = [
+      local.scenario_simulator_cache_refresh_queue_arn,
+      local.scenario_simulator_readmodel_refresh_queue_arn,
+    ]
+  }
 }
 
 resource "aws_iam_policy" "api_core_sqs" {
