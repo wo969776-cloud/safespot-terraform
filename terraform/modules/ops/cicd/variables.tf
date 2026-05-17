@@ -32,6 +32,12 @@ variable "allowed_branches" {
   default = ["main"]
 }
 
+variable "allowed_github_environments" {
+  description = "OIDC trust policy??허용할 GitHub Environment 이름 목록"
+  type        = list(string)
+  default     = []
+}
+
 variable "allow_pull_request_oidc" {
   type    = bool
   default = false

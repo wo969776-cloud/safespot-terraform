@@ -35,6 +35,7 @@
 |------|-------------|------|---------|:--------:|
 | <a name="input_allow_pull_request_oidc"></a> [allow\_pull\_request\_oidc](#input\_allow\_pull\_request\_oidc) | n/a | `bool` | `false` | no |
 | <a name="input_allowed_branches"></a> [allowed\_branches](#input\_allowed\_branches) | n/a | `list(string)` | <pre>[<br/>  "main"<br/>]</pre> | no |
+| <a name="input_allowed_github_environments"></a> [allowed\_github\_environments](#input\_allowed\_github\_environments) | OIDC trust policy에서 허용할 GitHub Environment 이름 목록 | `list(string)` | `[]` | no |
 | <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | n/a | `string` | n/a | yes |
 | <a name="input_cloudfront_distribution_id"></a> [cloudfront\_distribution\_id](#input\_cloudfront\_distribution\_id) | n/a | `string` | `""` | no |
 | <a name="input_common_tags"></a> [common\_tags](#input\_common\_tags) | n/a | `map(string)` | `{}` | no |

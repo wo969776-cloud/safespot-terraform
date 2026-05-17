@@ -33,6 +33,10 @@ lambda_deploy_repos = [
   "safespot-application",
 ]
 
+allowed_github_environments = [
+  "dev",
+]
+
 terraform_state_bucket = "safespot-terraform-state"
 
 frontend_s3_bucket         = "safespot-dev-frontend"

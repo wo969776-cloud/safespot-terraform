@@ -37,10 +37,11 @@ module "cicd" {
   terraform_state_bucket       = var.terraform_state_bucket
   terraform_state_key_prefixes = local.terraform_state_key_prefixes
 
-  account_id       = data.aws_caller_identity.current.account_id
-  aws_region       = data.aws_region.current.name
-  common_tags      = var.common_tags
-  allowed_branches = var.allowed_branches
+  account_id                  = data.aws_caller_identity.current.account_id
+  aws_region                  = data.aws_region.current.name
+  common_tags                 = var.common_tags
+  allowed_branches            = var.allowed_branches
+  allowed_github_environments = var.allowed_github_environments
 
   allow_pull_request_oidc = var.allow_pull_request_oidc
   enable_terraform_apply  = var.enable_terraform_apply
